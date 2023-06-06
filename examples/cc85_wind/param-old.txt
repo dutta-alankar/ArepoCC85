@@ -1,0 +1,115 @@
+%----  Relevant files
+InitCondFile        ./homogeneous_nH3e2_128_nside6_boxsize_10.dat.ic
+OutputDir           ./output
+
+ICFormat            3
+
+SnapshotFileBase    snap
+SnapFormat          3
+NumFilesPerSnapshot 1
+NumFilesWrittenInParallel  120
+
+ResubmitOn          1
+ResubmitCommand     ./resubmit-command.sh
+OutputListFilename  ol
+OutputListOn        0
+
+%%Cooling and star formation
+CoolingOn           0
+StarformationOn     0
+
+Omega0              0.0
+OmegaBaryon         0.0
+OmegaLambda         0.0
+HubbleParam         1.0
+
+BoxSize                10
+PeriodicBoundariesOn   1
+ComovingIntegrationOn  0
+
+MaxMemSize          3800
+
+TimeOfFirstSnapshot    0.0
+CpuTimeBetRestartFile  9000
+TimeLimitCPU           180000
+
+TimeBetStatistics    1.0
+TimeBegin            0.0
+TimeMax              1.
+TimeBetSnapshot      0.001
+
+UnitVelocity_in_cm_per_s  1.651077e6
+UnitLength_in_cm          3.0857e21
+UnitMass_in_g             1.9885e43
+GravityConstantInternal   0
+
+ErrTolIntAccuracy    0.1
+ErrTolTheta          0.1
+ErrTolForceAcc       0.1
+
+MaxSizeTimestep      0.0001
+MinSizeTimestep      1e-10
+CourantFac           0.2
+
+LimitUBelowThisDensity 0.0
+LimitUBelowCertainDensityToThisValue  0.0
+
+DesNumNgb            32
+MaxNumNgbDeviation   2
+
+MultipleDomains      8
+TopNodeFactor        4
+
+ActivePartFracForNewDomainDecomp 0.01
+
+TypeOfTimestepCriterion  0
+TypeOfOpeningCriterion  1
+
+GasSoftFactor        0.01
+
+SofteningComovingType0  0.1
+SofteningComovingType1  0.1
+SofteningComovingType2  0.1
+SofteningComovingType3  0.1
+SofteningComovingType4  0.1
+SofteningComovingType5  0.1
+
+SofteningMaxPhysType0  0.1
+SofteningMaxPhysType1  0.1
+SofteningMaxPhysType2  0.1
+SofteningMaxPhysType3  0.1
+SofteningMaxPhysType4  0.1
+SofteningMaxPhysType5  0.1
+
+SofteningTypeOfPartType0  0
+SofteningTypeOfPartType1  0
+SofteningTypeOfPartType2  0
+SofteningTypeOfPartType3  0
+SofteningTypeOfPartType4  0
+SofteningTypeOfPartType5  0
+
+InitGasTemp 2.e4
+MinGasTemp  1.e4
+MinEgySpec  0.0
+MinimumDensityOnStartUp  0.0
+
+%% moving mesh
+CellShapingSpeed                        0.5
+CellMaxAngleFactor                      2.25
+ReferenceGasPartMass                    3.e-5
+
+TargetGasMassFactor                     1
+RefinementCriterion                     1
+DerefinementCriterion                   1
+
+MinVolume              0
+MaxVolume              1e30
+MaxVolumeDiff          8.
+
+% AGN wind parameters
+AGNWindVelocity    5.e8
+AGNLuminosity      1.e45
+AGNWindTemperature 5.e5
+AGNWindSphereRad   0.5
+AGNWindTau         1
+%StickyLayerMaxDist 1.0

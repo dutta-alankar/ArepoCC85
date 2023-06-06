@@ -1,0 +1,3 @@
+make clean  BUILD_DIR=/home/alankar/Documents/exp-clcrush/arepo/examples/agn-wind/build CONFIG=/home/alankar/Documents/exp-clcrush/arepo/examples/agn-wind/Config.sh EXEC=/home/alankar/Documents/exp-clcrush/arepo/examples/agn-wind/Arepo
+
+make -j20  BUILD_DIR=/home/alankar/Documents/exp-clcrush/arepo/examples/agn-wind/build CONFIG=/home/alankar/Documents/exp-clcrush/arepo/examples/agn-wind/Config.sh EXEC=/home/alankar/Documents/exp-clcrush/arepo/examples/agn-wind/Arepo
