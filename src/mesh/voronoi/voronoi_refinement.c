@@ -340,22 +340,22 @@ int do_refinements(void)
 
               SphP[i].Energy *= faci;
               SphP[j].Energy *= facj;
-              
+
 #ifdef AGNWIND_FLAG
               locate_AGN_sphere();
               double radialDist_i, radialDist_j;
               radialDist_i = sqrt((P[i].Pos[0] - SpherePosX) * (P[i].Pos[0] - SpherePosX)
                                 + (P[i].Pos[1] - SpherePosY) * (P[i].Pos[1] - SpherePosY)
-                                + (P[i].Pos[2] - SpherePosZ) * (P[i].Pos[2] - SpherePosZ));      
+                                + (P[i].Pos[2] - SpherePosZ) * (P[i].Pos[2] - SpherePosZ));
               radialDist_j = sqrt((P[j].Pos[0] - SpherePosX) * (P[j].Pos[0] - SpherePosX)
                                 + (P[j].Pos[1] - SpherePosY) * (P[j].Pos[1] - SpherePosY)
                                 + (P[j].Pos[2] - SpherePosZ) * (P[j].Pos[2] - SpherePosZ));
-              
+
               if(SphP[i].AGNFlag == 3)
                 if(radialDist_i > radialDist_j){
                   SphP[i].AGNFlag = 0;
                   SphP[j].AGNFlag = 3;}
-                  
+
               if(SphP[j].AGNFlag == 3)
                 if(radialDist_j > radialDist_i){
                   SphP[i].AGNFlag = 3;}

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Mon Jan 23 10:09:53 2023
@@ -15,7 +14,7 @@ import os
 # dir = './output-relaxedSteady'
 dir = './output'
 
-# constants 
+# constants
 mu = 0.61
 mp = 1.676e-24
 Msun = 2e33
@@ -83,11 +82,11 @@ for num in range(0,171):
         rr      = np.sqrt((data['pos'][:,0] - SpherePos[0])**2 + \
                         (data['pos'][:,1] - SpherePos[1])**2 + \
                         (data['pos'][:,2] - SpherePos[2])**2)
-    
-        ind     = np.where( np.logical_not(np.logical_and(rr>=150, rr<=rTill)) ) 
+
+        ind     = np.where( np.logical_not(np.logical_and(rr>=150, rr<=rTill)) )
         remove  = np.size(ind)             # number of cells that need removal
-        # print('Remove %d cell/s'%remove) 
-        
+        # print('Remove %d cell/s'%remove)
+
         newposx = np.delete(data['pos'][:,0],ind)
         newposy = np.delete(data['pos'][:,1],ind)
         newposz = np.delete(data['pos'][:,2],ind)
@@ -97,33 +96,33 @@ for num in range(0,171):
         newvely = np.delete(data['velocity'][:,1],ind)
         newvelz = np.delete(data['velocity'][:,2],ind)
         data['velocity'] = np.vstack( (newvelx, newvely, newvelz) ).T
-        
+
         data['pressure'] = np.delete(data['pressure'][:],ind)
         data['density']  = np.delete(data['density'][:],ind)
         data['mass']     = np.delete(data['mass'][:],ind)
         data['radius']   = np.delete(rr[:],ind)
-        
+
     # print('Cutout: ', np.min(data['radius']), np.max(data['radius']) )
     # print('Shapes: ', rr.shape, data['radius'].shape )
     # print('Cutout: ', data['radius'])
-    
+
     data['density']  = data['density']*UnitDensity_in_g_per_cm3
     data['velocity'] = data['velocity']*UnitVelocity_in_cm_per_s
     data['radius']   = data['radius']*UnitLength_in_cm
     data['pressure'] = data['pressure']*UnitDensity_in_g_per_cm3*UnitVelocity_in_cm_per_s**2
     data['mass']     = data['mass']*UnitMass_in_g
-    
+
     # Perform 2D histogram on the data
     hist, x_edges, y_edges = np.histogram2d(np.log10(data['radius']/Rinj), np.log10(data['density']/rho0),
                     bins = (100,100), density=True)
-    
+
     # Find the percentiles of the histogram
     percentiles = [16, 50, 84]
     percentile_values = np.percentile(hist, percentiles)
 
     # Generate the coordinates for the percentile lines
     x_coords, y_coords = np.meshgrid( 0.5*(x_edges[1:]+x_edges[:-1]), 0.5*(y_edges[1:]+y_edges[:-1]) )
-        
+
     plt.figure(figsize=(13,10))
     '''
     for i in range(len(percentiles)):
@@ -134,12 +133,12 @@ for num in range(0,171):
     plt.pcolormesh(x_edges, y_edges, hist.T, cmap='viridis', norm='log')
     plt.colorbar()
     plt.plot(np.log10(cc85[:,0]), np.log10(cc85[:,1]), linewidth=3, color='black')
-    
-    
+
+
     for i in range(len(percentiles)):
-        plt.contour(x_coords, y_coords, hist.T, levels=[percentile_values[i]], 
+        plt.contour(x_coords, y_coords, hist.T, levels=[percentile_values[i]],
                     colors='tab:red', linestyles='dashed')
-    
+
     plt.xlim(0., 1.35)
     plt.ylim(-3.9, -0.8)
     plt.xlabel(r'Distance [$pc$] (log)', size=28)
@@ -148,12 +147,12 @@ for num in range(0,171):
     # Get artists and labels for legend and chose which ones to display
     # handles, labels = ax.get_legend_handles_labels()
     # from matplotlib.legend_handler import HandlerLine2D, HandlerTuple
-    # leg = plt.legend([(p1, p2, p3), (p4, p5, p6), (p1,p4), (p2,p5), (p3,p6)], 
-    #                 [labels[0], labels[3], 
+    # leg = plt.legend([(p1, p2, p3), (p4, p5, p6), (p1,p4), (p2,p5), (p3,p6)],
+    #                 [labels[0], labels[3],
     #                 r'$R_{cl}/\Delta$ = %d'%8,
     #                 r'$R_{cl}/\Delta$ = %d'%16,
     #                 r'$R_{cl}/\Delta$ = %d'%32], numpoints=1,
-    #                 handler_map={tuple: HandlerTuple(ndivide=None)}, 
+    #                 handler_map={tuple: HandlerTuple(ndivide=None)},
     #                 loc='lower left', ncol=1, fancybox=True, fontsize=25)
     plt.tick_params(axis='both', which='major', length=12, width=3, labelsize=24)
     plt.tick_params(axis='both', which='minor', length=8, width=2, labelsize=22)
@@ -162,25 +161,25 @@ for num in range(0,171):
     plt.savefig(f'{dir}/plots/profile/dens_snap_{num:03d}.png') #, transparent=True)
     # plt.show()
     plt.close()
-    
+
     plt.figure(figsize=(13,10))
 
     # Perform 2D histogram on the data
     hist, x_edges, y_edges = np.histogram2d(np.log10(data['radius']/Rinj), np.log10(data['pressure']/P0),
                     bins = (100,100), density=True)
-    
+
     # Find the percentiles of the histogram
     percentiles = [16, 50, 84]
     percentile_values = np.percentile(hist, percentiles)
 
     # Generate the coordinates for the percentile lines
     x_coords, y_coords = np.meshgrid( 0.5*(x_edges[1:]+x_edges[:-1]), 0.5*(y_edges[1:]+y_edges[:-1]) )
-            
+
     plt.pcolormesh(x_edges, y_edges, hist.T, cmap='viridis', norm='log')
-    plt.colorbar()    
-    
+    plt.colorbar()
+
     for i in range(len(percentiles)):
-        plt.contour(x_coords, y_coords, hist.T, levels=[percentile_values[i]], 
+        plt.contour(x_coords, y_coords, hist.T, levels=[percentile_values[i]],
                     colors='tab:red', linestyles='dashed')
     plt.plot(np.log10(cc85[:,0]), np.log10(cc85[:,2]), linewidth=3, color='black')
 
@@ -192,12 +191,12 @@ for num in range(0,171):
     # Get artists and labels for legend and chose which ones to display
     # handles, labels = ax.get_legend_handles_labels()
     # from matplotlib.legend_handler import HandlerLine2D, HandlerTuple
-    # leg = plt.legend([(p1, p2, p3), (p4, p5, p6), (p1,p4), (p2,p5), (p3,p6)], 
-    #                 [labels[0], labels[3], 
+    # leg = plt.legend([(p1, p2, p3), (p4, p5, p6), (p1,p4), (p2,p5), (p3,p6)],
+    #                 [labels[0], labels[3],
     #                 r'$R_{cl}/\Delta$ = %d'%8,
     #                 r'$R_{cl}/\Delta$ = %d'%16,
     #                 r'$R_{cl}/\Delta$ = %d'%32], numpoints=1,
-    #                 handler_map={tuple: HandlerTuple(ndivide=None)}, 
+    #                 handler_map={tuple: HandlerTuple(ndivide=None)},
     #                 loc='lower left', ncol=1, fancybox=True, fontsize=25)
     plt.tick_params(axis='both', which='major', length=12, width=3, labelsize=24)
     plt.tick_params(axis='both', which='minor', length=8, width=2, labelsize=22)
@@ -206,28 +205,28 @@ for num in range(0,171):
     plt.savefig(f'{dir}/plots/profile/pres_snap_{num:03d}.png') #, transparent=True)
     # plt.show()
     plt.close()
-    
+
     plt.figure(figsize=(13,10))
 
     # Perform 2D histogram on the data
     hist, x_edges, y_edges = np.histogram2d(np.log10(data['radius']/Rinj), np.sqrt(np.sum(data['velocity']**2, axis=1))/v0,
                     bins = (100,100), density=True)
-    
+
     # Find the percentiles of the histogram
     percentiles = [16, 50, 84]
     percentile_values = np.percentile(hist, percentiles)
 
     # Generate the coordinates for the percentile lines
     x_coords, y_coords = np.meshgrid( 0.5*(x_edges[1:]+x_edges[:-1]), 0.5*(y_edges[1:]+y_edges[:-1]) )
-            
+
     plt.pcolormesh(x_edges, y_edges, hist.T, cmap='viridis', norm='log')
-    plt.colorbar()    
-    
+    plt.colorbar()
+
     for i in range(len(percentiles)):
-        plt.contour(x_coords, y_coords, hist.T, levels=[percentile_values[i]], 
+        plt.contour(x_coords, y_coords, hist.T, levels=[percentile_values[i]],
                     colors='tab:red', linestyles='dashed')
     plt.plot(np.log10(cc85[:,0]), cc85[:,3], linewidth=3, color='black')
-    
+
     plt.xlim(0., 1.35)
     plt.ylim(0., 2.0)
     plt.xlabel(r'Distance [$pc$] (log)', size=28)
@@ -236,12 +235,12 @@ for num in range(0,171):
     # Get artists and labels for legend and chose which ones to display
     # handles, labels = ax.get_legend_handles_labels()
     # from matplotlib.legend_handler import HandlerLine2D, HandlerTuple
-    # leg = plt.legend([(p1, p2, p3), (p4, p5, p6), (p1,p4), (p2,p5), (p3,p6)], 
-    #                 [labels[0], labels[3], 
+    # leg = plt.legend([(p1, p2, p3), (p4, p5, p6), (p1,p4), (p2,p5), (p3,p6)],
+    #                 [labels[0], labels[3],
     #                 r'$R_{cl}/\Delta$ = %d'%8,
     #                 r'$R_{cl}/\Delta$ = %d'%16,
     #                 r'$R_{cl}/\Delta$ = %d'%32], numpoints=1,
-    #                 handler_map={tuple: HandlerTuple(ndivide=None)}, 
+    #                 handler_map={tuple: HandlerTuple(ndivide=None)},
     #                 loc='lower left', ncol=1, fancybox=True, fontsize=25)
     plt.tick_params(axis='both', which='major', length=12, width=3, labelsize=24)
     plt.tick_params(axis='both', which='minor', length=8, width=2, labelsize=22)
@@ -250,28 +249,28 @@ for num in range(0,171):
     plt.savefig(f'{dir}/plots/profile/vel_snap_{num:03d}.png') #, transparent=True)
     # plt.show()
     plt.close()
-    
+
     # Mass
     plt.figure(figsize=(13,10))
 
     # Perform 2D histogram on the data
     hist, x_edges, y_edges = np.histogram2d(np.log10(data['radius']/Rinj), np.log10(data['mass']/Msun),
                     bins = (100,100), density=True)
-    
+
     # Find the percentiles of the histogram
     percentiles = [16, 50, 84]
     percentile_values = np.percentile(hist, percentiles)
 
     # Generate the coordinates for the percentile lines
     x_coords, y_coords = np.meshgrid( 0.5*(x_edges[1:]+x_edges[:-1]), 0.5*(y_edges[1:]+y_edges[:-1]) )
-            
+
     plt.pcolormesh(x_edges, y_edges, hist.T, cmap='viridis', norm='log')
-    plt.colorbar()    
-    
+    plt.colorbar()
+
     for i in range(len(percentiles)):
-        plt.contour(x_coords, y_coords, hist.T, levels=[percentile_values[i]], 
+        plt.contour(x_coords, y_coords, hist.T, levels=[percentile_values[i]],
                     colors='tab:red', linestyles='dashed')
-    
+
     plt.xlim(0., 1.35)
     # plt.ylim(0., 2.0)
     plt.xlabel(r'Distance [$pc$] (log)', size=28)
@@ -280,12 +279,12 @@ for num in range(0,171):
     # Get artists and labels for legend and chose which ones to display
     # handles, labels = ax.get_legend_handles_labels()
     # from matplotlib.legend_handler import HandlerLine2D, HandlerTuple
-    # leg = plt.legend([(p1, p2, p3), (p4, p5, p6), (p1,p4), (p2,p5), (p3,p6)], 
-    #                 [labels[0], labels[3], 
+    # leg = plt.legend([(p1, p2, p3), (p4, p5, p6), (p1,p4), (p2,p5), (p3,p6)],
+    #                 [labels[0], labels[3],
     #                 r'$R_{cl}/\Delta$ = %d'%8,
     #                 r'$R_{cl}/\Delta$ = %d'%16,
     #                 r'$R_{cl}/\Delta$ = %d'%32], numpoints=1,
-    #                 handler_map={tuple: HandlerTuple(ndivide=None)}, 
+    #                 handler_map={tuple: HandlerTuple(ndivide=None)},
     #                 loc='lower left', ncol=1, fancybox=True, fontsize=25)
     plt.tick_params(axis='both', which='major', length=12, width=3, labelsize=24)
     plt.tick_params(axis='both', which='minor', length=8, width=2, labelsize=22)
@@ -294,29 +293,29 @@ for num in range(0,171):
     plt.savefig(f'{dir}/plots/profile/mass_snap_{num:03d}.png') #, transparent=True)
     # plt.show()
     plt.close()
-    
+
     # Volume
     plt.figure(figsize=(13,10))
-   
+
     # Perform 2D histogram on the data
-    hist, x_edges, y_edges = np.histogram2d(np.log10(data['radius']/Rinj), 
+    hist, x_edges, y_edges = np.histogram2d(np.log10(data['radius']/Rinj),
                                             np.log10(data['mass'])-np.log10(data['density'])-3*np.log10(pc),
                                             bins = (100,100), density=True)
-    
+
     # Find the percentiles of the histogram
     percentiles = [16, 50, 84]
     percentile_values = np.percentile(hist, percentiles)
 
     # Generate the coordinates for the percentile lines
     x_coords, y_coords = np.meshgrid( 0.5*(x_edges[1:]+x_edges[:-1]), 0.5*(y_edges[1:]+y_edges[:-1]) )
-            
+
     plt.pcolormesh(x_edges, y_edges, hist.T, cmap='viridis', norm='log')
-    plt.colorbar()    
-    
+    plt.colorbar()
+
     for i in range(len(percentiles)):
-        plt.contour(x_coords, y_coords, hist.T, levels=[percentile_values[i]], 
+        plt.contour(x_coords, y_coords, hist.T, levels=[percentile_values[i]],
                     colors='tab:red', linestyles='dashed')
-    
+
     plt.xlim(0., 1.35)
     # plt.ylim(0., 2.0)
     plt.xlabel(r'Distance [$pc$] (log)', size=28)
@@ -325,12 +324,12 @@ for num in range(0,171):
     # Get artists and labels for legend and chose which ones to display
     # handles, labels = ax.get_legend_handles_labels()
     # from matplotlib.legend_handler import HandlerLine2D, HandlerTuple
-    # leg = plt.legend([(p1, p2, p3), (p4, p5, p6), (p1,p4), (p2,p5), (p3,p6)], 
-    #                 [labels[0], labels[3], 
+    # leg = plt.legend([(p1, p2, p3), (p4, p5, p6), (p1,p4), (p2,p5), (p3,p6)],
+    #                 [labels[0], labels[3],
     #                 r'$R_{cl}/\Delta$ = %d'%8,
     #                 r'$R_{cl}/\Delta$ = %d'%16,
     #                 r'$R_{cl}/\Delta$ = %d'%32], numpoints=1,
-    #                 handler_map={tuple: HandlerTuple(ndivide=None)}, 
+    #                 handler_map={tuple: HandlerTuple(ndivide=None)},
     #                 loc='lower left', ncol=1, fancybox=True, fontsize=25)
     plt.tick_params(axis='both', which='major', length=12, width=3, labelsize=24)
     plt.tick_params(axis='both', which='minor', length=8, width=2, labelsize=22)

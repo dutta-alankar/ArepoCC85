@@ -4,7 +4,7 @@ Created on Wed Jul 14 01:04:40 2021
 
 @author: alankar
 
-Masses are interpreted as densities. 
+Masses are interpreted as densities.
 Make sure corresponding Arepo flag is on in Config.sh
 
 Read the relaxed grid and re-fill the field values from CC85 solution.
@@ -18,7 +18,7 @@ from scipy.interpolate import interp1d
 
 # sys.path.append('./arepo-snap-util')
 
-# constants 
+# constants
 mu = 0.61
 mp = 1.676e-24
 Msun = 2e33
@@ -95,9 +95,9 @@ costheta = data['pos'][:,2]/np.sqrt(data['pos'][:,0]**2 + data['pos'][:,1]**2 + 
 cosphi = data['pos'][:,0]/np.sqrt(data['pos'][:,0]**2 + data['pos'][:,1]**2)
 sinphi = data['pos'][:,1]/np.sqrt(data['pos'][:,0]**2 + data['pos'][:,1]**2)
 
-data['vel'][:,0]  = vel * sintheta * cosphi 
-data['vel'][:,1]  = vel * sintheta * sinphi 
-data['vel'][:,2]  = vel * costheta 
+data['vel'][:,0]  = vel * sintheta * cosphi
+data['vel'][:,1]  = vel * sintheta * sinphi
+data['vel'][:,2]  = vel * costheta
 
 def write_xmf(fileName):
     import h5py
@@ -114,40 +114,40 @@ def write_xmf(fileName):
             f.write('   <Topology TopologyType=\"Polyvertex\" NumberOfElements=\"%d\"/>\n'%len(np.array(hdf['PartType%d/Masses'%part])))
             f.write('   <Geometry GeometryType=\"XYZ\">\n')
             f.write('    <DataItem Dimensions=\"%d 3\" NumberType=\"Float\" Precision=\"%d\" Format=\"HDF\">\n'%(len(np.array(hdf['PartType%d/Masses'%part])), prec))
-            f.write('     %s:/PartType%d/Coordinates\n'%('./'+fileName+'.hdf5',part))  
+            f.write('     %s:/PartType%d/Coordinates\n'%('./'+fileName+'.hdf5',part))
             f.write('    </DataItem>\n')
             f.write('   </Geometry>\n')
-            
+
             f.write('   <Attribute Name=\"%s\" AttributeType=\"Vector\" Center=\"Node\">\n'%'Velocities')
             f.write('    <DataItem Dimensions=\"%d 3\" NumberType=\"Float\" Precision=\"%d\" Format=\"HDF\">\n'%(len(np.array(hdf['PartType%d/Masses'%part])), prec))
             f.write('     %s:/PartType%d/%s\n'%('./'+fileName+'.hdf5',part,'Velocities'))
             f.write('    </DataItem>\n')
             f.write('   </Attribute>\n')
-            
+
             f.write('   <Attribute Name=\"%s\" AttributeType=\"Scalar\" Center=\"Node\">\n'%'Masses')
             f.write('    <DataItem Dimensions=\"%d\" NumberType=\"Float\" Precision=\"%d\" Format=\"HDF\">\n'%(len(np.array(hdf['PartType%d/Masses'%part])), prec))
             f.write('     %s:/PartType%d/%s\n'%('./'+fileName+'.hdf5',part,'Masses'))
             f.write('    </DataItem>\n')
             f.write('   </Attribute>\n')
-            
+
             f.write('   <Attribute Name=\"%s\" AttributeType=\"Scalar\" Center=\"Node\">\n'%'InternalEnergy')
             f.write('    <DataItem Dimensions=\"%d\" NumberType=\"Float\" Precision=\"%d\" Format=\"HDF\">\n'%(len(np.array(hdf['PartType%d/Masses'%part])), prec))
             f.write('     %s:/PartType%d/%s\n'%('./'+fileName+'.hdf5',part,'InternalEnergy'))
             f.write('    </DataItem>\n')
             f.write('   </Attribute>\n')
-            
+
             f.write('   <Attribute Name=\"%s\" AttributeType=\"Scalar\" Center=\"Node\">\n'%'AGNFlag')
             f.write('    <DataItem Dimensions=\"%d\" NumberType=\"Float\" Precision=\"%d\" Format=\"HDF\">\n'%(len(np.array(hdf['PartType%d/Masses'%part])), prec))
             f.write('     %s:/PartType%d/%s\n'%('./'+fileName+'.hdf5',part,'AGNFlag'))
             f.write('    </DataItem>\n')
             f.write('   </Attribute>\n')
-            
+
             f.write('   <Attribute Name=\"%s\" AttributeType=\"Scalar\" Center=\"Node\">\n'%'ParticleIDs')
             f.write('    <DataItem Dimensions=\"%d\" NumberType=\"Integer\" Precision=\"%d\" Format=\"HDF\">\n'%(len(np.array(hdf['PartType%d/Masses'%part])), prec))
             f.write('     %s:/PartType%d/%s\n'%('./'+fileName+'.hdf5',part,'ParticleIDs'))
             f.write('    </DataItem>\n')
             f.write('   </Attribute>\n')
-            
+
             f.write('  </Grid>\n')
             f.write(' </Domain>\n')
             f.write('</Xdmf>')

@@ -4,7 +4,7 @@ Created on Wed Jul 14 01:04:40 2021
 
 @author: alankar
 
-Masses are interpreted as densities. 
+Masses are interpreted as densities.
 Make sure corresponding Arepo flag is on in Config.sh
 """
 
@@ -18,7 +18,7 @@ from scipy.interpolate import interp1d
 
 #sys.path.append('./arepo-snap-util')
 
-# constants 
+# constants
 mu = 0.61
 mp = 1.676e-24
 Msun = 2e33
@@ -112,7 +112,7 @@ data['pos'][:ncell,2] = cells_z.flatten()
 
 # Add boundary cells
 ipix   = np.arange(npix)
-xx,yy,zz = hp.pixelfunc.pix2vec(nside, ipix) 
+xx,yy,zz = hp.pixelfunc.pix2vec(nside, ipix)
 
 dgrid = min(dgridx, dgridy, dgridz)
 # Inner Layer
@@ -131,7 +131,7 @@ data['pos'][ncell+npix:ncell+2*npix,1]    = (bndryR+size_fac*dgrid/2.) * yy + Sp
 data['pos'][ncell+npix:ncell+2*npix,2]    = (bndryR+size_fac*dgrid/2.) * zz + SpherePos[2]
 data['flga'][ncell+npix:ncell+2*npix]     = 2
 # data['mass'][ncell+npix:ncell+2*npix]     = rho0 / UnitDensity_in_g_per_cm3
-# data['u'][ncell+npix:ncell+2*npix]        = (1/(gamma-1))* (P0/rho0) /  UnitU_in_cm_per_s_sq 
+# data['u'][ncell+npix:ncell+2*npix]        = (1/(gamma-1))* (P0/rho0) /  UnitU_in_cm_per_s_sq
 
 '''
 fig = plt.figure(figsize = (10, 10))
@@ -140,7 +140,7 @@ ax.scatter3D((bndryR-size_fac*dgrid/2.) * xx + SpherePos[0], (bndryR-size_fac*dg
 plt.show()
 '''
 
-# Perturb Cartesian grid 
+# Perturb Cartesian grid
 theta  = (np.random.rand(ncell).astype(np.float32)) * np.pi
 phi    = (np.random.rand(ncell).astype(np.float32)) * np.pi * 2
 
@@ -167,14 +167,14 @@ costheta = data['pos'][:,2]/np.sqrt(data['pos'][:,0]**2 + data['pos'][:,1]**2 + 
 cosphi = data['pos'][:,0]/np.sqrt(data['pos'][:,0]**2 + data['pos'][:,1]**2)
 sinphi = data['pos'][:,1]/np.sqrt(data['pos'][:,0]**2 + data['pos'][:,1]**2)
 
-data['vel'][:,0]  = vel * sintheta * cosphi 
-data['vel'][:,1]  = vel * sintheta * sinphi 
-data['vel'][:,2]  = vel * costheta 
+data['vel'][:,0]  = vel * sintheta * cosphi
+data['vel'][:,1]  = vel * sintheta * sinphi
+data['vel'][:,2]  = vel * costheta
 
-# Remove normal AREPO cells from volume bounded by boundary sphere                                                                                                     
+# Remove normal AREPO cells from volume bounded by boundary sphere
 flag    = data['flga']
 ind     = np.where(np.logical_and( rr <= (bndryR+size_fac*dgrid), (flag == 0)) )
-number  = np.size(ind)             # number of cells that need removal 
+number  = np.size(ind)             # number of cells that need removal
 
 newposx = np.delete(data['pos'][:,0],ind)
 newposy = np.delete(data['pos'][:,1],ind)
@@ -191,7 +191,7 @@ newflga = np.delete(data['flga'],ind)
 
 rr = np.delete(rr,ind)
 
-# Update Data 
+# Update Data
 data['count']     = data['count'] - number
 data['pos']       = np.zeros((data['count'],3))
 data['vel']       = np.zeros((data['count'],3))
@@ -235,7 +235,7 @@ lowres_data['pos'][:ncell_lowres,0] = cells_x.flatten()
 lowres_data['pos'][:ncell_lowres,1] = cells_y.flatten()
 lowres_data['pos'][:ncell_lowres,2] = cells_z.flatten()
 
-# Perturb Cartesian grid 
+# Perturb Cartesian grid
 theta  = (np.random.rand(ncell_lowres).astype(np.float32)) * np.pi
 phi    = (np.random.rand(ncell_lowres).astype(np.float32)) * np.pi * 2
 
@@ -264,17 +264,17 @@ lowres_data['mass'][:ncell_lowres] = rho0*rhoTld(rr/(Rinj/pc)) / UnitDensity_in_
 lowres_data['u'][:ncell_lowres]    = (1/(gamma-1))* ((P0*prsTld(rr/(Rinj/pc)))/(rho0*rhoTld(rr/(Rinj/pc)))) /  UnitU_in_cm_per_s_sq
 vel  = (v0*velTld(rr/(Rinj/pc))) / UnitVelocity_in_cm_per_s
 
-data['vel'][:ncell_lowres,0]  = vel * sintheta * cosphi 
-data['vel'][:ncell_lowres,1]  = vel * sintheta * sinphi 
-data['vel'][:ncell_lowres,2]  = vel * costheta 
+data['vel'][:ncell_lowres,0]  = vel * sintheta * cosphi
+data['vel'][:ncell_lowres,1]  = vel * sintheta * sinphi
+data['vel'][:ncell_lowres,2]  = vel * costheta
 
 # Remove lowres cells from highres region
 flag    = lowres_data['flga']
 ind     = np.where(
-                np.logical_and(np.fabs(cells_x.flatten())<boxhres/2, 
-                               np.fabs(cells_y.flatten())<boxhres/2, 
+                np.logical_and(np.fabs(cells_x.flatten())<boxhres/2,
+                               np.fabs(cells_y.flatten())<boxhres/2,
                                np.fabs(cells_z.flatten())<boxhres/2 ) )
-number  = np.size(ind)             # number of cells that need removal 
+number  = np.size(ind)             # number of cells that need removal
 
 newposx = np.hstack((data['pos'][:,0],np.delete(lowres_data['pos'][:,0],ind)))
 newposy = np.hstack((data['pos'][:,1],np.delete(lowres_data['pos'][:,1],ind)))
@@ -325,40 +325,40 @@ def write_xmf(fileName):
             f.write('   <Topology TopologyType=\"Polyvertex\" NumberOfElements=\"%d\"/>\n'%len(np.array(hdf['PartType%d/Masses'%part])))
             f.write('   <Geometry GeometryType=\"XYZ\">\n')
             f.write('    <DataItem Dimensions=\"%d 3\" NumberType=\"Float\" Precision=\"%d\" Format=\"HDF\">\n'%(len(np.array(hdf['PartType%d/Masses'%part])), prec))
-            f.write('     %s:/PartType%d/Coordinates\n'%('./'+fileName+'.hdf5',part))  
+            f.write('     %s:/PartType%d/Coordinates\n'%('./'+fileName+'.hdf5',part))
             f.write('    </DataItem>\n')
             f.write('   </Geometry>\n')
-            
+
             f.write('   <Attribute Name=\"%s\" AttributeType=\"Vector\" Center=\"Node\">\n'%'Velocities')
             f.write('    <DataItem Dimensions=\"%d 3\" NumberType=\"Float\" Precision=\"%d\" Format=\"HDF\">\n'%(len(np.array(hdf['PartType%d/Masses'%part])), prec))
             f.write('     %s:/PartType%d/%s\n'%('./'+fileName+'.hdf5',part,'Velocities'))
             f.write('    </DataItem>\n')
             f.write('   </Attribute>\n')
-            
+
             f.write('   <Attribute Name=\"%s\" AttributeType=\"Scalar\" Center=\"Node\">\n'%'Masses')
             f.write('    <DataItem Dimensions=\"%d\" NumberType=\"Float\" Precision=\"%d\" Format=\"HDF\">\n'%(len(np.array(hdf['PartType%d/Masses'%part])), prec))
             f.write('     %s:/PartType%d/%s\n'%('./'+fileName+'.hdf5',part,'Masses'))
             f.write('    </DataItem>\n')
             f.write('   </Attribute>\n')
-            
+
             f.write('   <Attribute Name=\"%s\" AttributeType=\"Scalar\" Center=\"Node\">\n'%'InternalEnergy')
             f.write('    <DataItem Dimensions=\"%d\" NumberType=\"Float\" Precision=\"%d\" Format=\"HDF\">\n'%(len(np.array(hdf['PartType%d/Masses'%part])), prec))
             f.write('     %s:/PartType%d/%s\n'%('./'+fileName+'.hdf5',part,'InternalEnergy'))
             f.write('    </DataItem>\n')
             f.write('   </Attribute>\n')
-            
+
             f.write('   <Attribute Name=\"%s\" AttributeType=\"Scalar\" Center=\"Node\">\n'%'AGNFlag')
             f.write('    <DataItem Dimensions=\"%d\" NumberType=\"Float\" Precision=\"%d\" Format=\"HDF\">\n'%(len(np.array(hdf['PartType%d/Masses'%part])), prec))
             f.write('     %s:/PartType%d/%s\n'%('./'+fileName+'.hdf5',part,'AGNFlag'))
             f.write('    </DataItem>\n')
             f.write('   </Attribute>\n')
-            
+
             f.write('   <Attribute Name=\"%s\" AttributeType=\"Scalar\" Center=\"Node\">\n'%'ParticleIDs')
             f.write('    <DataItem Dimensions=\"%d\" NumberType=\"Integer\" Precision=\"%d\" Format=\"HDF\">\n'%(len(np.array(hdf['PartType%d/Masses'%part])), prec))
             f.write('     %s:/PartType%d/%s\n'%('./'+fileName+'.hdf5',part,'ParticleIDs'))
             f.write('    </DataItem>\n')
             f.write('   </Attribute>\n')
-            
+
             f.write('  </Grid>\n')
             f.write(' </Domain>\n')
             f.write('</Xdmf>')

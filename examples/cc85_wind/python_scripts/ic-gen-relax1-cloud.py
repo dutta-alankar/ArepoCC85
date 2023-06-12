@@ -4,7 +4,7 @@ Created on Wed Jul 14 01:04:40 2021
 
 @author: alankar
 
-Masses are interpreted as densities. 
+Masses are interpreted as densities.
 Make sure corresponding Arepo flag is on in Config.sh
 Takes in output from a steady wind simulation and introduces the cloud
 """
@@ -18,7 +18,7 @@ from scipy.interpolate import interp1d
 
 # sys.path.append('./arepo-snap-util')
 
-# constants 
+# constants
 mu = 0.61
 mp = 1.676e-24
 Msun = 2e33
@@ -108,7 +108,7 @@ rrCl      = np.sqrt((data['pos'][:,0] - SpherePos[0])**2 + \
                     (data['pos'][:,2] - SpherePos[2])**2)
 # print(np.min(rrCl), np.max(rrCl))
 flag    = data['flga']
-ind     = np.where( rrCl <= (Rcl+extra*Rcl/RclBydcell) ) 
+ind     = np.where( rrCl <= (Rcl+extra*Rcl/RclBydcell) )
 number  = np.size(ind)             # number of cells that need removal
 print('Removed %d cell/s.'%number)
 count_wnd = count - number
@@ -135,7 +135,7 @@ npix     = hp.pixelfunc.nside2npix(nside)
 
 # Add cells of the cloud
 ipix   = np.arange(npix)
-xx,yy,zz = hp.pixelfunc.pix2vec(nside, ipix) 
+xx,yy,zz = hp.pixelfunc.pix2vec(nside, ipix)
 
 # generate array for the cloud
 count = layers*npix
@@ -151,44 +151,44 @@ data_cloud['count']     = count
 for layer in range(layers):
     SpherePos = [0.5, 0.5, 0.5]                    # position of the sphere centre
     SpherePos = np.array(SpherePos)*boxsize
-    
+
     data_cloud['pos'][layer*npix:(layer+1)*npix,0]           = (layer*(Rcl/RclBydcell)+0.5*(Rcl/RclBydcell)) * xx + SpherePos[0]
     data_cloud['pos'][layer*npix:(layer+1)*npix,1]           = (layer*(Rcl/RclBydcell)+0.5*(Rcl/RclBydcell)) * yy + SpherePos[1] + Rini
     data_cloud['pos'][layer*npix:(layer+1)*npix,2]           = (layer*(Rcl/RclBydcell)+0.5*(Rcl/RclBydcell)) * zz + SpherePos[2]
-    
+
     # print(layer)
     # print('x_avg = %.2f'%np.average(data_cloud['pos'][layer*npix:(layer+1)*npix,0]))
     # print('y_avg = %.2f'%np.average(data_cloud['pos'][layer*npix:(layer+1)*npix,1]))
     # print('z_avg = %.2f'%np.average(data_cloud['pos'][layer*npix:(layer+1)*npix,2]))
-    
+
     xw = data_cloud['pos'][:,0][layer*npix:(layer+1)*npix] - SpherePos[0]
     yw = data_cloud['pos'][:,1][layer*npix:(layer+1)*npix] - SpherePos[1]
     zw = data_cloud['pos'][:,2][layer*npix:(layer+1)*npix] - SpherePos[2]
-        
+
     rr_wind = np.sqrt(xw**2 + yw**2 + zw**2)
-    
+
     # print('rr_avg = %.2f'%np.average(rr_wind))
-    
+
     data_cloud['flga'][layer*npix:(layer+1)*npix]            = 0
     data_cloud['mass'][layer*npix:(layer+1)*npix]            = rho0*rhoTld(rr_wind/(Rinj/UnitLength_in_cm)) / UnitDensity_in_g_per_cm3
     data_cloud['u'][layer*npix:(layer+1)*npix]               = (1/(gamma-1))* ((P0*prsTld(rr_wind/(Rinj/UnitLength_in_cm)))/(rho0*rhoTld(rr_wind/(Rinj/UnitLength_in_cm)))) /  UnitU_in_cm_per_s_sq
-    
+
     if layer<RclBydcell: # fill with cloud
         data_cloud['mass'][layer*npix:(layer+1)*npix]            = chi*data_cloud['mass'][layer*npix:(layer+1)*npix]
         data_cloud['u'][layer*npix:(layer+1)*npix]               = data_cloud['u'][layer*npix:(layer+1)*npix]/chi
-        
+
     else: # fill with wind
         vel  = (v0*velTld(rr_wind/(Rinj/UnitLength_in_cm))) / UnitVelocity_in_cm_per_s
-        
+
         sintheta = np.sqrt(xw**2 + yw**2)/rr_wind
         costheta = zw/rr_wind
         cosphi = xw/np.sqrt(xw**2 + yw**2)
         sinphi = yw/np.sqrt(xw**2 + yw**2)
 
-        data_cloud['vel'][layer*npix:(layer+1)*npix,0]  = vel * sintheta * cosphi 
-        data_cloud['vel'][layer*npix:(layer+1)*npix,1]  = vel * sintheta * sinphi 
-        data_cloud['vel'][layer*npix:(layer+1)*npix,2]  = vel * costheta 
-        
+        data_cloud['vel'][layer*npix:(layer+1)*npix,0]  = vel * sintheta * cosphi
+        data_cloud['vel'][layer*npix:(layer+1)*npix,1]  = vel * sintheta * sinphi
+        data_cloud['vel'][layer*npix:(layer+1)*npix,2]  = vel * costheta
+
 total_count = layers*npix + count_wnd
 
 totalposx = np.hstack((newposx,data_cloud['pos'][:,0]))
@@ -241,40 +241,40 @@ def write_xmf(fileName):
             f.write('   <Topology TopologyType=\"Polyvertex\" NumberOfElements=\"%d\"/>\n'%len(np.array(hdf['PartType%d/Masses'%part])))
             f.write('   <Geometry GeometryType=\"XYZ\">\n')
             f.write('    <DataItem Dimensions=\"%d 3\" NumberType=\"Float\" Precision=\"%d\" Format=\"HDF\">\n'%(len(np.array(hdf['PartType%d/Masses'%part])), prec))
-            f.write('     %s:/PartType%d/Coordinates\n'%('./'+fileName+'.hdf5',part))  
+            f.write('     %s:/PartType%d/Coordinates\n'%('./'+fileName+'.hdf5',part))
             f.write('    </DataItem>\n')
             f.write('   </Geometry>\n')
-            
+
             f.write('   <Attribute Name=\"%s\" AttributeType=\"Vector\" Center=\"Node\">\n'%'Velocities')
             f.write('    <DataItem Dimensions=\"%d 3\" NumberType=\"Float\" Precision=\"%d\" Format=\"HDF\">\n'%(len(np.array(hdf['PartType%d/Masses'%part])), prec))
             f.write('     %s:/PartType%d/%s\n'%('./'+fileName+'.hdf5',part,'Velocities'))
             f.write('    </DataItem>\n')
             f.write('   </Attribute>\n')
-            
+
             f.write('   <Attribute Name=\"%s\" AttributeType=\"Scalar\" Center=\"Node\">\n'%'Masses')
             f.write('    <DataItem Dimensions=\"%d\" NumberType=\"Float\" Precision=\"%d\" Format=\"HDF\">\n'%(len(np.array(hdf['PartType%d/Masses'%part])), prec))
             f.write('     %s:/PartType%d/%s\n'%('./'+fileName+'.hdf5',part,'Masses'))
             f.write('    </DataItem>\n')
             f.write('   </Attribute>\n')
-            
+
             f.write('   <Attribute Name=\"%s\" AttributeType=\"Scalar\" Center=\"Node\">\n'%'InternalEnergy')
             f.write('    <DataItem Dimensions=\"%d\" NumberType=\"Float\" Precision=\"%d\" Format=\"HDF\">\n'%(len(np.array(hdf['PartType%d/Masses'%part])), prec))
             f.write('     %s:/PartType%d/%s\n'%('./'+fileName+'.hdf5',part,'InternalEnergy'))
             f.write('    </DataItem>\n')
             f.write('   </Attribute>\n')
-            
+
             f.write('   <Attribute Name=\"%s\" AttributeType=\"Scalar\" Center=\"Node\">\n'%'AGNFlag')
             f.write('    <DataItem Dimensions=\"%d\" NumberType=\"Float\" Precision=\"%d\" Format=\"HDF\">\n'%(len(np.array(hdf['PartType%d/Masses'%part])), prec))
             f.write('     %s:/PartType%d/%s\n'%('./'+fileName+'.hdf5',part,'AGNFlag'))
             f.write('    </DataItem>\n')
             f.write('   </Attribute>\n')
-            
+
             f.write('   <Attribute Name=\"%s\" AttributeType=\"Scalar\" Center=\"Node\">\n'%'ParticleIDs')
             f.write('    <DataItem Dimensions=\"%d\" NumberType=\"Integer\" Precision=\"%d\" Format=\"HDF\">\n'%(len(np.array(hdf['PartType%d/Masses'%part])), prec))
             f.write('     %s:/PartType%d/%s\n'%('./'+fileName+'.hdf5',part,'ParticleIDs'))
             f.write('    </DataItem>\n')
             f.write('   </Attribute>\n')
-            
+
             f.write('  </Grid>\n')
             f.write(' </Domain>\n')
             f.write('</Xdmf>')

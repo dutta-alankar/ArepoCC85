@@ -1,5 +1,5 @@
 %----  Relevant files
-%% After driving wind and steady state obtained, cloud is introduced 
+%% After driving wind and steady state obtained, cloud is introduced
 InitCondFile        ./homogeneous_res_128_nside3_boxsize_50000_cloud.dat.ic
 OutputDir           ./output
 
@@ -95,8 +95,8 @@ MinEgySpec  0.0
 MinimumDensityOnStartUp  0.0
 
 %% moving mesh
-CellShapingSpeed                        0.5               
-CellMaxAngleFactor                      2.25 
+CellShapingSpeed                        0.5
+CellMaxAngleFactor                      2.25
 ReferenceGasPartMass                    0.01
 
 TargetGasMassFactor                     1

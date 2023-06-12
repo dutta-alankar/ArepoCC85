@@ -30,5 +30,5 @@ def momTerm(rTld): #Assumption: rTld>=1
 
     return prsTld_at_rTld - (1./rTld**2)*intg
 
-with open(f'{sys.argv[2]}.txt', 'w') as file: 
+with open(f'{sys.argv[2]}.txt', 'w') as file:
     file.write( '%f\n'%momTerm(float(sys.argv[1])) )

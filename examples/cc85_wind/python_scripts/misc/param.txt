@@ -1,4 +1,4 @@
-%----  Relevant files 
+%----  Relevant files
 InitCondFile        ./homogeneous_res_128_nside6_boxsize_50000.dat.ic
 OutputDir           ./output
 
@@ -94,8 +94,8 @@ MinEgySpec  0.0
 MinimumDensityOnStartUp  0.0
 
 %% moving mesh
-CellShapingSpeed                        0.5               
-CellMaxAngleFactor                      2.25 
+CellShapingSpeed                        0.5
+CellMaxAngleFactor                      2.25
 ReferenceGasPartMass                    1000
 
 TargetGasMassFactor                     1

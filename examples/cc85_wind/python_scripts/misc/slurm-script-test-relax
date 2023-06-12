@@ -28,6 +28,6 @@ cd $SLURM_SUBMIT_DIR
 echo "Working Directory = $(pwd)"
 
 export PROG="./Arepo paramRelax1.txt"
-mkdir -p $SLURM_SUBMIT_DIR/output 
+mkdir -p $SLURM_SUBMIT_DIR/output
 
 srun $PROG

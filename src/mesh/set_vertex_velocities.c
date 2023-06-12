@@ -229,7 +229,7 @@ void set_vertex_velocities(void)
               double Edot = All.AGNWindEdot / (All.UnitEnergy_in_cgs/All.UnitTime_in_s);
               double c_sound = get_sound_speed(i);
               double AGNWindVelocity = dmax(c_sound, All.BoostMeshDriftinWind * sqrt(2*Edot/Mdot));
-              
+
               if(SphP[i].AGNFlag == 3)
 	        v = dmax(v,AGNWindVelocity);
 	      // if(SphP[i].PScalars[0] > 0.01)
@@ -280,18 +280,18 @@ void set_vertex_velocities(void)
       /*
      if(SphP[i].AGNFlag == 0){
         double xpos, ypos, zpos;
-  
+
         xpos = P[i].Pos[0] - SpherePosX;
         ypos = P[i].Pos[1] - SpherePosY;
         zpos = P[i].Pos[2] - SpherePosZ;
-  
+
         double rTrans = 3.0*(All.AGNWindSphereRad*PARSEC/All.UnitLength_in_cm);
         double sigTrans = 0.5*rTrans;
 
         double radialDist = sqrt(xpos*xpos+ypos*ypos+zpos*zpos);
 		double modulation = (1+tanh((radialDist-rTrans)/sigTrans))*0.5; // tanh((radialDist-rTrans)/sigTrans); //(radialDist<=rTrans)?0.:1.0;
 		if(!(can_this_cell_be_split(i))) modulation = 0.;
-			
+
 	    SphP[i].VelVertex[0] *= modulation;
 	    SphP[i].VelVertex[1] *= modulation;
 	    SphP[i].VelVertex[2] *= modulation;
@@ -541,15 +541,15 @@ void check_AGNsphere_ngb(int i){
       else{
         AGNFlag = PrimExch[particle].AGNFlag;
       }
-      
+
       if(AGNFlag == 2)
 	SphP[i].AGNFlag = 3;
-      
+
       if(AGNFlag == 1){
         SphP[i].AGNFlag = 4;
         break;
       }
-      
+
       if(q == SphP[i].last_connection)
         break;
 

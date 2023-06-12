@@ -115,5 +115,5 @@ AGNWindSphereAng         1.0
 BoostMeshDriftinWind     3.0
 ResolutionBoostAGNWind   1000.0
 EnhanceResCloudNeigh     1.0e-02
-EnhanceResFactor         1.0e-01 
+EnhanceResFactor         1.0e-01
 % StickyLayerMaxDist       1.0

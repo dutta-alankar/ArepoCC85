@@ -175,29 +175,29 @@ static int refine_criterion_default(int i)
   locate_AGN_sphere();
   double xpos, ypos, zpos;
   double r, theta, phi;
-  
+
   xpos = P[i].Pos[0] - SpherePosX;
   ypos = P[i].Pos[1] - SpherePosY;
   zpos = P[i].Pos[2] - SpherePosZ;
-  
+
   r = sqrt(xpos*xpos+ypos*ypos+zpos*zpos);
   theta = acos(zpos/r);
   phi = atan2(ypos,xpos);
-  phi = (phi<0)?(phi+2*M_PI):phi; 
-  
+  phi = (phi<0)?(phi+2*M_PI):phi;
+
   /* Assumes cloud is along positive y-axis */
   int Nprp, Nprl;
   double delTheta, delPhi;
-  
+
   Nprp = 10;
   Nprl = 300;
-  
+
   /* For now check ic-gen-relax1-cloud.py */
   double Rcl = 10.;
   double Rini = 300.;
-  
+
   double Rmax = Nprl*Rcl;
-  
+
   double enhance = All.EnhanceResFactor;
 #ifdef CLOUD_PRESENT
   double enhanceCloud = All.EnhanceResCloudNeigh;
@@ -207,15 +207,15 @@ static int refine_criterion_default(int i)
           return 1;
     else return 0;
   }
-#endif /* #ifdef CLOUD_PRESENT */ 
-  
+#endif /* #ifdef CLOUD_PRESENT */
+
   delTheta = Nprp*(Rcl/Rini);
   delPhi = delTheta;
-  
+
   // if(r>1.5*Rmax) return 0;
   if (r<=Rmax){
     if ( (theta>=(M_PI/2.-delTheta)) && (theta<=(M_PI/2.+delTheta)) ){
-      if ( (phi>=(M_PI/2.-delPhi)) && (phi<=(M_PI/2.+delPhi)) ){ 
+      if ( (phi>=(M_PI/2.-delPhi)) && (phi<=(M_PI/2.+delPhi)) ){
 #if defined(REFINE_AGNWIND)
         if(can_this_cell_be_split(i) && SphP[i].AGNFlag == 3) {
           if(P[i].Mass > 2.0 * enhance * All.TargetGasMass/All.ResolutionBoostAGNWind)
@@ -238,7 +238,7 @@ static int refine_criterion_default(int i)
     }
   }
 #endif /* #if defined(REFINE_AGNWIND) */
-#endif /* #ifdef AGNWIND_FLAG */  
+#endif /* #ifdef AGNWIND_FLAG */
     if(can_this_cell_be_split(i) && P[i].Mass > 2.0 * All.TargetGasMass)
       return 1;
 #ifdef REFINEMENT_HIGH_RES_GAS
@@ -326,16 +326,16 @@ static int refine_criterion_volume(int i)
   locate_AGN_sphere();
   double xpos, ypos, zpos;
   double r, theta, phi;
-  
+
   xpos = P[i].Pos[0] - SpherePosX;
   ypos = P[i].Pos[1] - SpherePosY;
   zpos = P[i].Pos[2] - SpherePosZ;
-  
+
   r = sqrt(xpos*xpos+ypos*ypos+zpos*zpos);
   theta = acos(zpos/r);
   phi = atan2(ypos,xpos);
-  phi = (phi<0)?(phi+2*M_PI):phi; 
-  
+  phi = (phi<0)?(phi+2*M_PI):phi;
+
   double rHres = 1.5*(All.AGNWindSphereRad*PARSEC/All.UnitLength_in_cm);
   double enhance = 1.; //(r<=rHres)?(2./3):1.0;
   if(All.MaxVolumeDiff > 0 && SphP[i].Volume > enhance * All.MaxVolumeDiff * SphP[i].MinNgbVolume)
