@@ -1,11 +1,11 @@
 #!/bin/sh
 
 module load hdf5/parallel fftw/parallel gsl gmp
-AREPO_DIR=/home/alankar/exp-clcrush/arepo
+AREPO_DIR=/home/alankar/ArepoCC85
 cd $AREPO_DIR
-make clean BUILD_DIR=$AREPO_DIR/examples/agn-wind/build \
-           CONFIG=$AREPO_DIR/examples/agn-wind/Config.sh \
-		   EXEC=$AREPO_DIR/examples/agn-wind/Arepo
-make -j16  BUILD_DIR=$AREPO_DIR/examples/agn-wind/build \
-           CONFIG=$AREPO_DIR/examples/agn-wind/Config.sh \
-		   EXEC=$AREPO_DIR/examples/agn-wind/Arepo
+make clean BUILD_DIR=$AREPO_DIR/examples/cc85_wind/build \
+           CONFIG=$AREPO_DIR/examples/cc85_wind/Config.sh \
+		   EXEC=$AREPO_DIR/examples/cc85_wind/Arepo
+make -j16  BUILD_DIR=$AREPO_DIR/examples/cc85_wind/build \
+           CONFIG=$AREPO_DIR/examples/cc85_wind/Config.sh \
+		   EXEC=$AREPO_DIR/examples/cc85_wind/Arepo

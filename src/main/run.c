@@ -106,9 +106,9 @@ void run(void)
       set_non_standard_physics_for_current_time();
 
 #ifdef AGNWIND_FLAG
-#if (PASSIVE_SCALARS<1)
-	  terminate("At least one passive scalar field is needed to have AGN wind.\n");
-#endif /* #if !defined(MAXSCALARS) */
+//  #if (PASSIVE_SCALARS<1)
+	  // terminate("At least one passive scalar field is needed to have AGN wind.\n");
+// #endif /* #if (PASSIVE_SCALARS<1) */
       locate_AGN_sphere_restart();
 #endif /* #ifdef AGNWIND_FLAG */
 

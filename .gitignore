@@ -268,3 +268,10 @@ run.sh
 
 # snap util
 examples/cc85_wind/arepo-snap-util
+
+#run files
+examples/cc85_wind/WARNINGS
+examples/cc85_wind/output/
+examples/cc85_wind/param.txt-usedvalues
+examples/cc85_wind/uses-machines.txt
+

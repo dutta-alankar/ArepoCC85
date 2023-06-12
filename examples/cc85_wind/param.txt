@@ -4,10 +4,10 @@ OutputDir           ./output
 
 ICFormat            3
 
-SnapshotFileBase    snap
+SnapshotFileBase    snapshot
 SnapFormat          3
 NumFilesPerSnapshot 1
-NumFilesWrittenInParallel  120
+NumFilesWrittenInParallel  96
 
 ResubmitOn          1
 ResubmitCommand     ./resubmit-command.sh
@@ -106,10 +106,14 @@ MinVolume              0
 MaxVolume              3.e58
 MaxVolumeDiff          8.
 
-% AGN wind parameters
-AGNWindMdot        0.5
-AGNWindEdot        2.e41
-AGNWindPdot        0.
-AGNWindSphereRad   200
-AGNWindSphereAng   1.0
-%StickyLayerMaxDist 1.0
+%% AGN wind parameters
+AGNWindMdot              0.5
+AGNWindEdot              2.0e+41
+AGNWindPdot              0.
+AGNWindSphereRad         200.0
+AGNWindSphereAng         1.0
+BoostMeshDriftinWind     3.0
+ResolutionBoostAGNWind   1000.0
+EnhanceResCloudNeigh     1.0e-02
+EnhanceResFactor         1.0e-01 
+% StickyLayerMaxDist       1.0

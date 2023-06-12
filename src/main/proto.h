@@ -475,6 +475,9 @@ int face_check_responsibility_of_this_task(tessellation *T, int p1, int p2, stru
 int face_get_normals(tessellation *T, int i, struct geometry *geom);
 int face_get_state(tessellation *T, int p, int i, struct state *st);
 void face_boundary_check(point *p, double *velx, double *vely, double *velz);
+#ifdef AGNWIND_FLAG
+void locate_AGN_sphere();
+#endif /* #ifdef AGNWIND_FLAG */
 void face_boundary_check_vertex(tessellation *T, int p, MyFloat *velx, MyFloat *vely, MyFloat *velz);
 double face_timestep(struct state *state_L, struct state *state_R, double *hubble_a, double *atime);
 void state_convert_to_local_frame(struct state *st, double *vel_face, double hubble_a, double atime);

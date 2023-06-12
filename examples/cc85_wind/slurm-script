@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name="arepo-wind"
+#SBATCH --job-name="arepo-cc85"
 #SBATCH --mail-type=NONE         # Mail events (NONE, BEGIN, END, FAIL, ALL)
 #SBATCH --mail-user=alankardutta@iisc.ac.in    # Where to send mail.  Set this to your email address
 #SBATCH -p debug
@@ -11,7 +11,7 @@
 echo "Working Directory = $(pwd)"
 
 cd $SLURM_SUBMIT_DIR
-export PROG="./Arepo param.txt 2 47"
+export PROG="./Arepo param.txt" # 2 47"
 mkdir -p $SLURM_SUBMIT_DIR/output
 module load hdf5/parallel fftw/parallel gsl gmp
 

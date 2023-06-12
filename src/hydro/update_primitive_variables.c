@@ -193,6 +193,7 @@ void do_special_boundaries(struct particle_data *localP, struct sph_particle_dat
 #ifdef AGNWIND_FLAG
   if(localSphP[i].AGNFlag == 1)
     {
+      // locate_AGN_sphere();
       localSphP[i].Energy -= (localSphP[i].Momentum[0]*localSphP[i].Momentum[0]
 			      + localSphP[i].Momentum[1]*localSphP[i].Momentum[1]
 			      + localSphP[i].Momentum[2]*localSphP[i].Momentum[2])/2./P[i].Mass;
@@ -201,7 +202,6 @@ void do_special_boundaries(struct particle_data *localP, struct sph_particle_dat
         localSphP[i].Momentum[k] = 0.0;
         localP[i].Vel[k] = 0.0;
       }
-
     }
 #endif /* #ifdef AGNWIND_FLAG */
 }

@@ -88,6 +88,8 @@
  * - DD.MM.YYYY Description
  * - 17.05.2018 Prepared file for public release -- Rainer Weinberger
  */
+#define  _POSIX_C_SOURCE 200809L
+#define _GNU_SOURCE
 
 #include <math.h>
 #include <stdio.h>
@@ -321,6 +323,9 @@ void compute_interface_fluxes(tessellation *T)
         {
           printf("i=%d rho_L=%g rho_R=%g\n", i, state_L.rho, state_R.rho);
           printf("area=%g lx=%g ly=%g   rx=%g ry=%g\n", VF[i].area, state_L.dx, state_L.dy, state_R.dx, state_R.dy);
+#ifdef AGNWIND_FLAG
+	  printf("AGNFlag_L=%i AGNFlag_R=%i\n",state_L.flga,state_R.flga);
+#endif /* #ifdef AGNWIND_FLAG */
           terminate("found crazy values");
         }
 #endif /* #ifndef ISOTHERM_EQS #else */
@@ -341,23 +346,67 @@ void compute_interface_fluxes(tessellation *T)
       face_turn_velocities(&state_R, &geom);
 
 #ifdef AGNWIND_FLAG
+      static double CC85_val = 0.;
+      static double radius2_old = 0.;
+      
       double Mdot = All.AGNWindMdot * (SOLAR_MASS/SEC_PER_YEAR) / (All.UnitMass_in_g/All.UnitTime_in_s);
-      double Edot = All.AGNWindMdot / (All.UnitEnergy_in_cgs/All.UnitTime_in_s);
+      double Edot = All.AGNWindEdot / (All.UnitEnergy_in_cgs/All.UnitTime_in_s);
       double Pdot = All.AGNWindPdot / (All.UnitEnergy_in_cgs/All.UnitLength_in_cm);
       double Rinj = All.AGNWindSphereRad*PARSEC/All.UnitLength_in_cm;
-      double opn  = All.AGNWindSphereAng;
+      double opn  = All.AGNWindSphereAng;       
       double radius2, xpos, ypos, zpos;
-      double mass_fluxes, mom_fluxes, enrg_fluxes, p_wind;
-
+      double mass_fluxes, mom_fluxes, enrg_fluxes, p_wind, rTld;
+      char command[256];
+      char filename[128];
+    
       xpos = 0.5 * (DP[VF[i].p2].x + DP[VF[i].p1].x) - SpherePosX;
       ypos = 0.5 * (DP[VF[i].p2].y + DP[VF[i].p1].y) - SpherePosY;
       zpos = 0.5 * (DP[VF[i].p2].z + DP[VF[i].p1].z) - SpherePosZ;
-
+      
+      p_wind  = sqrt(Mdot*Edot)*pow(Rinj,-2);
       radius2 = xpos*xpos + ypos*ypos + zpos*zpos;
+      rTld = sqrt(radius2)/Rinj;
+    
+      
+      if( (state_L.flga == 1 && state_R.flga == 2) || (state_L.flga == 2 && state_R.flga == 1) ){
+        // printf("CONSTANTS = %g %g %g %g %g %g\n", Mdot, Edot, Pdot, SpherePosX, SpherePosY, SpherePosZ);
+        int status;
+        double tol = 1e-3;
+        if (fabs((radius2_old-radius2)/radius2) > tol){
+            // printf("CC85: Radius: %.8e\n", sqrt(rTld));
+            CC85_val = 0.;
+            sprintf(command, "python ./momFlux.py %lf %s_%03d", rTld, "tmp", ThisTask);
+            status = system( command );
+            sprintf(filename, "./tmp_%03d.txt", ThisTask);
+            FILE *fp = fopen(filename, "r");
+            if (fp == NULL) {
+              printf("CC85: Error opening file tmp_%03d.txt\n", ThisTask);
+              printf("CC85: processor:%d, Python run status: %d\n", ThisTask, status);
+              MPI_Finalize();
+              exit(1);
+            }
+            char *line = NULL;
+            size_t len = 0;
+            ssize_t read;
+            int text_line = 0;
+            while ((read = getline(&line, &len, fp)) != -1) {
+              double number;
+              sscanf(line, "%lf", &number);
+              if (text_line==0) CC85_val = number;
+                text_line++;
+            }
+            sprintf(command, "rm -rf %s", filename);
+            status = system(command);
+            free(line);
+            fclose(fp);    
+            radius2_old = radius2;
+            // printf("CC85: CC85 value: %.8e\n", CC85_val);
+        }
+    }
+      
       mass_fluxes  = Mdot / (4 * M_PI * opn * radius2);
-      mom_fluxes   = Pdot / (4 * M_PI * opn * radius2);;
+      mom_fluxes   = Pdot / (4 * M_PI * opn * radius2) + p_wind * CC85_val;
       enrg_fluxes  = Edot / (4 * M_PI * opn * radius2);
-      p_wind  = 2*sqrt(Mdot*Edot)*pow(Rinj,-2)*4.50e-2;
 #endif /* #ifdef AGNWIND_FLAG */
 
 #ifndef MESHRELAX
@@ -416,19 +465,23 @@ void compute_interface_fluxes(tessellation *T)
 
       /* set the face states and fluxes of those quantities that are passively advected */
       face_set_scalar_states_and_fluxes(&state_L, &state_R, &state_face, &fluxes);
-
+      
+#ifndef AGNWIND_FLAG
       face_limit_fluxes(&state_L, &state_R, &state_center_L, &state_center_R, &fluxes, face_dt, &count, &count_reduced);
-#ifdef AGNWIND_FLAG
+#else /* #ifndef AGNWIND_FLAG */
       if((state_L.flga != 1) && (state_R.flga != 1))
-	   face_limit_fluxes(&state_L, &state_R, &state_center_L, &state_center_R, &fluxes, face_dt, &count, &count_reduced);
-      if(state_L.flga == 1 && state_R.flga == 1){
+        face_limit_fluxes(&state_L, &state_R, &state_center_L, &state_center_R, &fluxes, face_dt, &count, &count_reduced);
+      if(state_L.flga == 1 && state_R.flga == 1) {
         fluxes.mass = 0.;
         fluxes.momentum[0] = 0.;
         fluxes.momentum[1] = 0.;
         fluxes.momentum[2] = 0.;
         fluxes.energy      = 0.;
-        fluxes.scalars[0]  = 0.;
-
+#ifdef MAXSCALARS
+	for(int scalar = 0; scalar < N_Scalar; scalar++)
+	  fluxes.scalars[scalar]  = 0.;
+#endif /* #ifdef MAXSCALARS */     
+        //fluxes.scalars[0]  = 0.;
       }
       if(state_L.flga == 1 && state_R.flga == 2){
         fluxes.mass        =  mass_fluxes;
@@ -436,7 +489,15 @@ void compute_interface_fluxes(tessellation *T)
         fluxes.momentum[1] =  mom_fluxes * geom.ny + p_wind * geom.ny;
         fluxes.momentum[2] =  mom_fluxes * geom.nz + p_wind * geom.nz;
         fluxes.energy      =  enrg_fluxes;
-        fluxes.scalars[0]  =  mass_fluxes; //scalar injected has value set to 1.0
+#ifdef MAXSCALARS
+	for(int scalar = 0; scalar < N_Scalar; scalar++){
+	  fluxes.scalars[scalar]  = 0.;
+	  if(scalar == ScalarIndex.AGNWind)
+	    fluxes.scalars[scalar] = fluxes.mass;
+	  }
+#endif /* #ifdef MAXSCALARS */ 
+        // fluxes.scalars[0]  =  mass_fluxes; //scalar injected has value set to 1.0
+        // printf("ACTUAL FLUXES = %g %g %g\n", fluxes.mass,mom_fluxes,fluxes.energy);
       }
 
       if(state_L.flga == 2 && state_R.flga == 1){
@@ -445,9 +506,17 @@ void compute_interface_fluxes(tessellation *T)
         fluxes.momentum[1] =  mass_fluxes * geom.ny + p_wind * geom.ny;
         fluxes.momentum[2] =  mass_fluxes * geom.nz + p_wind * geom.nz;
         fluxes.energy      = -enrg_fluxes;
-        fluxes.scalars[0]  = -mass_fluxes;
+#ifdef MAXSCALARS
+	for(int scalar = 0; scalar < N_Scalar; scalar++){
+	  fluxes.scalars[scalar]  = 0.;
+	  if(scalar == ScalarIndex.AGNWind)
+	    fluxes.scalars[scalar] = fluxes.mass;
+	  }
+#endif /* #ifdef MAXSCALARS */ 
+        // fluxes.scalars[0]  = -mass_fluxes;
+        // printf("ACTUAL FLUXES = %g %g %g\n", fluxes.mass,mom_fluxes,fluxes.energy);
       }
-#endif /* #ifdef AGNWIND_FLAG */
+#endif /* #ifndef AGNWIND_FLAG #else */
 
       /* put in cosmological factors */
       if(All.ComovingIntegrationOn)

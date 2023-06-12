@@ -51,7 +51,7 @@ static int jeans_refinement_criteria(int i);
 
 #ifdef REFINEMENT_VOLUME_LIMIT
 static int refine_criterion_volume(int i);
-#endif
+#endif /* #ifdef REFINEMENT_VOLUME_LIMIT */
 
 #ifdef REFINEMENT_MERGE_CELLS
 char *FlagDoNotRefine;
@@ -169,11 +169,81 @@ static int can_this_cell_be_split(int i)
 static int refine_criterion_default(int i)
 {
 #ifdef REFINEMENT_HIGH_RES_GAS
-  if(SphP[i].AllowRefinement != 0)
+  if(SphP[i].AllowRefinement != 0) {
 #endif /* #ifdef REFINEMENT_HIGH_RES_GAS */
+#ifdef AGNWIND_FLAG
+  locate_AGN_sphere();
+  double xpos, ypos, zpos;
+  double r, theta, phi;
+  
+  xpos = P[i].Pos[0] - SpherePosX;
+  ypos = P[i].Pos[1] - SpherePosY;
+  zpos = P[i].Pos[2] - SpherePosZ;
+  
+  r = sqrt(xpos*xpos+ypos*ypos+zpos*zpos);
+  theta = acos(zpos/r);
+  phi = atan2(ypos,xpos);
+  phi = (phi<0)?(phi+2*M_PI):phi; 
+  
+  /* Assumes cloud is along positive y-axis */
+  int Nprp, Nprl;
+  double delTheta, delPhi;
+  
+  Nprp = 10;
+  Nprl = 300;
+  
+  /* For now check ic-gen-relax1-cloud.py */
+  double Rcl = 10.;
+  double Rini = 300.;
+  
+  double Rmax = Nprl*Rcl;
+  
+  double enhance = All.EnhanceResFactor;
+#ifdef CLOUD_PRESENT
+  double enhanceCloud = All.EnhanceResCloudNeigh;
+  double neighColor = SphP[i].AGNWindFraction;
+  if ( (neighColor>1.e-3) || ( (ypos>0 && ypos<20*Rcl) && (fabs(xpos)<=4*Rcl) && (fabs(zpos)<=4*Rcl)) ){
+    if(can_this_cell_be_split(i) && P[i].Mass > 2.0 * enhanceCloud *All.TargetGasMass)
+          return 1;
+    else return 0;
+  }
+#endif /* #ifdef CLOUD_PRESENT */ 
+  
+  delTheta = Nprp*(Rcl/Rini);
+  delPhi = delTheta;
+  
+  // if(r>1.5*Rmax) return 0;
+  if (r<=Rmax){
+    if ( (theta>=(M_PI/2.-delTheta)) && (theta<=(M_PI/2.+delTheta)) ){
+      if ( (phi>=(M_PI/2.-delPhi)) && (phi<=(M_PI/2.+delPhi)) ){ 
+#if defined(REFINE_AGNWIND)
+        if(can_this_cell_be_split(i) && SphP[i].AGNFlag == 3) {
+          if(P[i].Mass > 2.0 * enhance * All.TargetGasMass/All.ResolutionBoostAGNWind)
+            return 1;
+        }
+        else return 0;
+#else /* #if defined(REFINE_AGNWIND) */
+        if(can_this_cell_be_split(i) && P[i].Mass > 2.0 * enhance *All.TargetGasMass)
+          return 1;
+        else return 0;
+#endif /* #if defined(REFINE_AGNWIND) #else */
+      }
+    }
+  }
+  else {
+#if defined(REFINE_AGNWIND)
+    if(can_this_cell_be_split(i) && SphP[i].AGNFlag == 3) {
+       if(P[i].Mass > 2.0 * All.TargetGasMass/All.ResolutionBoostAGNWind)
+         return 1;
+    }
+  }
+#endif /* #if defined(REFINE_AGNWIND) */
+#endif /* #ifdef AGNWIND_FLAG */  
     if(can_this_cell_be_split(i) && P[i].Mass > 2.0 * All.TargetGasMass)
       return 1;
-
+#ifdef REFINEMENT_HIGH_RES_GAS
+  }
+#endif /* #ifdef REFINEMENT_HIGH_RES_GAS */
   return 0; /* default is not to refine */
 }
 
@@ -252,7 +322,26 @@ static int jeans_refinement_criteria(int i)
  */
 static int refine_criterion_volume(int i)
 {
+#ifdef AGNWIND_FLAG
+  locate_AGN_sphere();
+  double xpos, ypos, zpos;
+  double r, theta, phi;
+  
+  xpos = P[i].Pos[0] - SpherePosX;
+  ypos = P[i].Pos[1] - SpherePosY;
+  zpos = P[i].Pos[2] - SpherePosZ;
+  
+  r = sqrt(xpos*xpos+ypos*ypos+zpos*zpos);
+  theta = acos(zpos/r);
+  phi = atan2(ypos,xpos);
+  phi = (phi<0)?(phi+2*M_PI):phi; 
+  
+  double rHres = 1.5*(All.AGNWindSphereRad*PARSEC/All.UnitLength_in_cm);
+  double enhance = 1.; //(r<=rHres)?(2./3):1.0;
+  if(All.MaxVolumeDiff > 0 && SphP[i].Volume > enhance * All.MaxVolumeDiff * SphP[i].MinNgbVolume)
+#else /* #ifdef AGNWIND_FLAG */
   if(All.MaxVolumeDiff > 0 && SphP[i].Volume > All.MaxVolumeDiff * SphP[i].MinNgbVolume)
+#endif /* #ifdef AGNWIND_FLAG #else */
     {
 #ifdef REGULARIZE_MESH_FACE_ANGLE
       if(SphP[i].MaxFaceAngle < 1.5 * All.CellMaxAngleFactor)

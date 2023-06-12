@@ -70,6 +70,10 @@ void init_scalars()
     }
 #endif /* #ifdef PASSIVE_SCALARS */
 
+#ifdef AGNWIND_FLAG
+  ScalarIndex.AGNWind = scalar_init(&SphP[0].AGNWindFraction, &SphP[0].AGNWindMass, SCALAR_TYPE_PASSIVE);
+#endif /* #ifdef AGNWIND_FLAG */
+
   mpi_printf("INIT: %d/%d Scalars used.\n", N_Scalar, MAXSCALARS);
 #endif /* MAXSCALARS */
 }

@@ -143,10 +143,10 @@ void cooling_and_starformation(void)
 
 #ifdef AGNWIND_FLAG
       if(SphP[i].AGNFlag != 0)
-	   flag = 1;
+        flag = 1;
       else
-	   if(SphP[i].Tracer > 0.01)
-	    flag = 1;
+        if(SphP[i].AGNWindFraction > 0.01)
+	  flag = 1;
 #endif /* #ifdef AGNWIND_FLAG */
 
       if(flag == 1)
@@ -241,7 +241,7 @@ double get_starformation_rate(int i)
       if(SphP[i].AGNFlag != 0)
 	flag = 1;
       else
-	if(SphP[i].Tracer > 0.01)
+        if(SphP[i].AGNWindFraction > 0.01)
 	  flag = 1;
 #endif /* #ifdef AGNWIND_FLAG */
 

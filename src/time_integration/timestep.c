@@ -298,7 +298,7 @@ void update_timesteps_from_gravity(void)
       if(i < 0)
         continue;
 
-      if((SphP[i].AGNFlag == 1) || (SphP[i].AGNFlag == 2)){
+      if((SphP[i].AGNFlag != 0) && (SphP[i].AGNFlag != 5)){
         if(P[i].TimeBinHydro > minGlobal){
           binold = P[i].TimeBinHydro;
           timebin_move_particle(&TimeBinsHydro, i, binold, minGlobal);
@@ -458,7 +458,7 @@ integertime get_timestep_hydro(int p)
 
 #ifdef AGNWIND_FLAG
   if(SphP[p].AGNFlag == 1)
-    dt = All.MaxSizeTimestep;
+    dt = 1.0e+10*All.MaxSizeTimestep;
 #endif /* #ifdef AGNWIND_FLAG */
 
 #if defined(USE_SFR)
@@ -468,6 +468,9 @@ integertime get_timestep_hydro(int p)
       double sfr = get_starformation_rate(p);
 
       double dt_sfr = 0.1 * P[p].Mass / (sfr / ((All.UnitMass_in_g / SOLAR_MASS) / (All.UnitTime_in_s / SEC_PER_YEAR)));
+#if defined(AGNWIND_FLAG)
+      if(SphP[p].AGNFlag != 1)
+#endif /* #if defined(AGNWIND_FLAG) */
       if(dt_sfr < dt)
         dt = dt_sfr;
     }

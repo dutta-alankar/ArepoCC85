@@ -482,6 +482,11 @@ void tree_based_timesteps_setsoundspeeds(void)
               All.cf_atime;
 #endif /* #ifdef VORONOI_STATIC_MESH #else */
 
+#if defined(AGNWIND_FLAG)
+      if(SphP[i].AGNFlag == 1)
+	csnd = 1.0e-30;
+#endif /* #if defined(AGNWIND_FLAG) */
+
       SphP[i].CurrentMaxTiStep = rad / csnd;
 
       /* note: for cosmological integration, CurrentMaxTiStep stores  1/a times the maximum allowed physical timestep */

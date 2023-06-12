@@ -4,7 +4,7 @@ Created on Wed Jul 14 01:04:40 2021
 
 @author: alankar
 
-Masses are interpreted as densities.
+Masses are interpreted as densities. 
 Make sure corresponding Arepo flag is on in Config.sh
 """
 
@@ -18,10 +18,10 @@ from const import KB
 
 sys.path.append('./arepo-snap-util')
 
-#background parameters
+#background parameters                                                                                                                          
 nH_bg    = 300.
 temp_bg  = 2.e4
-mu_bg    = 0.61           # mean particle weight
+mu_bg    = 0.61           # mean particle weight 
 gamma    = 5./3
 
 #units and constants
@@ -37,7 +37,7 @@ unit_rho = unit_m/unit_l**3
 
 #free parameters
 boxsize  = 10
-res      = 128                                # roughly res cels per side
+res      = 128                                # roughly res cels per side 
 nside    = 6                                  # HEALPIX base resolution nside
 bndryR   = boxsize/res                        # radius of boundary
 size_fac = 1.                                 # thickness of boundary layers in units of half the grid size
@@ -67,11 +67,11 @@ data['flga']      = np.zeros(ncell  + 2*npix, dtype=int)
 data['count']     = ncell + 2*npix
 
 rho               = rho_bg
-u                 = 1./(gamma - 1)/gamma * cs**2
+u                 = 1./(gamma - 1)/gamma * cs**2  
 
 # Add boundary cells
 ipix   = np.arange(npix)
-xx,yy,zz = hp.pixelfunc.pix2vec(nside, ipix)
+xx,yy,zz = hp.pixelfunc.pix2vec(nside, ipix) 
 
 # Inner Layer
 data['pos'][ncell:ncell+npix,0]           = (bndryR-size_fac*dgrid/2.) * xx + SpherePos[0]
@@ -79,7 +79,7 @@ data['pos'][ncell:ncell+npix,1]           = (bndryR-size_fac*dgrid/2.) * yy + Sp
 data['pos'][ncell:ncell+npix,2]           = (bndryR-size_fac*dgrid/2.) * zz + SpherePos[2]
 data['flga'][ncell:ncell+npix]            = 1
 data['mass'][ncell:ncell+npix]            = rho / unit_rho *contrast
-data['u'][ncell:ncell+npix]               = u / unit_u
+data['u'][ncell:ncell+npix]               = u / unit_u 
 
 #Outer Layer
 data['pos'][ncell+npix:ncell+2*npix,0]    = (bndryR+size_fac*dgrid/2.) * xx + SpherePos[0]
@@ -87,7 +87,7 @@ data['pos'][ncell+npix:ncell+2*npix,1]    = (bndryR+size_fac*dgrid/2.) * yy + Sp
 data['pos'][ncell+npix:ncell+2*npix,2]    = (bndryR+size_fac*dgrid/2.) * zz + SpherePos[2]
 data['flga'][ncell+npix:ncell+2*npix]     = 2
 data['mass'][ncell+npix:ncell+2*npix]     = rho / unit_rho *contrast
-data['u'][ncell+npix:ncell+2*npix]        = u / unit_u
+data['u'][ncell+npix:ncell+2*npix]        = u / unit_u 
 
 #Fill the entire box with normal AREPO cells
 points   = np.linspace( 0, 1., endpoint=True, num=int(np.round(ncell**(1./ndim)))+1, dtype=np.float32 )
@@ -98,7 +98,7 @@ data['pos'][:ncell,0] = cells_x.flatten()
 data['pos'][:ncell,1] = cells_y.flatten()
 data['pos'][:ncell,2] = cells_z.flatten()
 
-# Perturb Cartesian grid
+# Perturb Cartesian grid 
 theta  = (np.random.rand(ncell).astype(np.float32)) * np.pi
 phi    = (np.random.rand(ncell).astype(np.float32)) * np.pi * 2
 
@@ -113,11 +113,11 @@ data['mass'][:ncell]    = rho / unit_rho
 #data['mass'][data['flga']>0]  = rho / unit_rho * 1.e-3
 data['u'][:ncell]       = u / unit_u
 
-# Remove normal AREPO cells from volume bounded by boundary sphere
+# Remove normal AREPO cells from volume bounded by boundary sphere                                                                                                     
 rr      = np.sqrt((data['pos'][:,0] - SpherePos[0])**2 + (data['pos'][:,1] - SpherePos[1])**2 + (data['pos'][:,2] - SpherePos[2])**2)
 flag    = data['flga']
 ind     = np.where(np.logical_and( rr <= (bndryR+size_fac*dgrid), (flag == 0)) )
-number  = np.size(ind)             # number of cells that need removal
+number  = np.size(ind)             # number of cells that need removal 
 
 newposx = np.delete(data['pos'][:,0],ind)
 newposy = np.delete(data['pos'][:,1],ind)

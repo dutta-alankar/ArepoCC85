@@ -46,10 +46,6 @@
 static void validate_vertex_velocities_1d();
 #endif /* #ifdef ONEDIMS_SPHERICAL */
 
-#ifdef AGNWIND_FLAG
-static void locate_AGN_sphere();
-#endif /* #ifdef AGNWIND_FLAG */
-
 /*! \brief Sets velocities of individual mesh-generating points.
  *
  *  \retur void
@@ -230,10 +226,14 @@ void set_vertex_velocities(void)
 
 #ifdef AGNWIND_FLAG
               double Mdot = All.AGNWindMdot * (SOLAR_MASS/SEC_PER_YEAR) / (All.UnitMass_in_g/All.UnitTime_in_s);
-              double Edot = All.AGNWindMdot / (All.UnitEnergy_in_cgs/All.UnitTime_in_s);
-              double AGNWindVelocity = sqrt(2*Edot/Mdot);
-	      if(SphP[i].PScalars[0] > 0.01)
-	       v = dmax(v,3*AGNWindVelocity);
+              double Edot = All.AGNWindEdot / (All.UnitEnergy_in_cgs/All.UnitTime_in_s);
+              double c_sound = get_sound_speed(i);
+              double AGNWindVelocity = dmax(c_sound, All.BoostMeshDriftinWind * sqrt(2*Edot/Mdot));
+              
+              if(SphP[i].AGNFlag == 3)
+	        v = dmax(v,AGNWindVelocity);
+	      // if(SphP[i].PScalars[0] > 0.01)
+	      //  v = dmax(v,3*AGNWindVelocity);
 #endif /* #ifdef AGNWIND_FLAG */
 
 #else  /* #ifdef REGULARIZE_MESH_CM_DRIFT_USE_SOUNDSPEED */
@@ -243,8 +243,12 @@ void set_vertex_velocities(void)
           double vmax = dmax(All.cf_atime * get_sound_speed(i), vel);
 
 #ifdef AGNWIND_FLAG
-          if(SphP[i].PScalars[0] > 0.01)
-	       vmax = dmax(vmax,3*All.AGNWindVelocity/All.UnitVelocity_in_cm_per_s);
+          double Mdot = All.AGNWindMdot * (SOLAR_MASS/SEC_PER_YEAR) / (All.UnitMass_in_g/All.UnitTime_in_s);
+          double Edot = All.AGNWindEdot / (All.UnitEnergy_in_cgs/All.UnitTime_in_s);
+          if(SphP[i].AGNFlag == 3)
+            vmax = dmax(vmax, All.BoostMeshDriftinWind * sqrt(2*Edot/Mdot));
+          //if(SphP[i].PScalars[0] > 0.01)
+	  //  vmax = dmax(vmax,3*All.AGNWindVelocity/All.UnitVelocity_in_cm_per_s);
 #endif /* #ifdef AGNWIND_FLAG */
 
           if(v > vmax)
@@ -273,29 +277,32 @@ void set_vertex_velocities(void)
 #endif /* #ifdef REGULARIZE_MESH_CM_DRIFT */
 
 #ifdef AGNWIND_FLAG
-      double radialDist2, radialDist;
+      /*
+     if(SphP[i].AGNFlag == 0){
+        double xpos, ypos, zpos;
+  
+        xpos = P[i].Pos[0] - SpherePosX;
+        ypos = P[i].Pos[1] - SpherePosY;
+        zpos = P[i].Pos[2] - SpherePosZ;
+  
+        double rTrans = 3.0*(All.AGNWindSphereRad*PARSEC/All.UnitLength_in_cm);
+        double sigTrans = 0.5*rTrans;
 
-      radialDist2 = (P[i].Pos[0] - SpherePosX) * (P[i].Pos[0] - SpherePosX)
-	+ (P[i].Pos[1] - SpherePosY) * (P[i].Pos[1] - SpherePosY)
-	+ (P[i].Pos[2] - SpherePosZ) * (P[i].Pos[2] - SpherePosZ);
-      radialDist  = sqrt(radialDist2);
-
-      if(SphP[i].AGNFlag == 0){
-          double rTrans = 2.5*(All.AGNWindSphereRad*PARSEC/All.UnitLength_in_cm);
-          double sigTrans = 0.1*rTrans;
-	//if(radialDist < 2.5*(All.AGNWindSphereRad*PARSEC/All.UnitLength_in_cm)){
-	  SphP[i].VelVertex[0] *= (0.5*(1 + tanh((radialDist-rTrans)/sigTrans)));
-	  SphP[i].VelVertex[1] *= (0.5*(1 + tanh((radialDist-rTrans)/sigTrans)));
-	  SphP[i].VelVertex[2] *= (0.5*(1 + tanh((radialDist-rTrans)/sigTrans)));
-	//}
+        double radialDist = sqrt(xpos*xpos+ypos*ypos+zpos*zpos);
+		double modulation = (1+tanh((radialDist-rTrans)/sigTrans))*0.5; // tanh((radialDist-rTrans)/sigTrans); //(radialDist<=rTrans)?0.:1.0;
+		if(!(can_this_cell_be_split(i))) modulation = 0.;
+			
+	    SphP[i].VelVertex[0] *= modulation;
+	    SphP[i].VelVertex[1] *= modulation;
+	    SphP[i].VelVertex[2] *= modulation;
       }
+      */
       if(SphP[i].AGNFlag == 1 || SphP[i].AGNFlag == 2){
-	SphP[i].VelVertex[0] = 0.;
-	SphP[i].VelVertex[1] = 0.;
-	SphP[i].VelVertex[2] = 0.;
+	for(int dim = 0; dim < 3; dim++)
+	  SphP[i].VelVertex[dim] = 0.;
       }
 
-      if(SphP[i].AGNFlag == 0)
+      if((SphP[i].AGNFlag != 1) && (SphP[i].AGNFlag != 2))
 	check_AGNsphere_ngb(i);
 #endif /* #ifdef AGNWIND_FLAG */
 
@@ -455,7 +462,10 @@ void validate_vertex_velocities(void)
 #endif /* #if defined(REFLECTIVE_X) || defined(REFLECTIVE_Y) || defined(REFLECTIVE_Z) */
 
 #ifdef AGNWIND_FLAG
-static void locate_AGN_sphere(void){
+void locate_AGN_sphere(void){
+  static int flag = 0;
+  if (flag != 0)
+    return;
   int idx, i;
   double MaxX_tmp=0., MaxY_tmp=0., MaxZ_tmp=0.;
   double MinX_tmp=boxSize_X, MinY_tmp=boxSize_Y, MinZ_tmp=boxSize_Z;
@@ -499,11 +509,14 @@ static void locate_AGN_sphere(void){
     SpherePosY = (MaxY + MinY)/2;
     SpherePosZ = (MaxZ + MinZ)/2;
   }
+  flag++;
 }
 
 void check_AGNsphere_ngb(int i){
   int q = SphP[i].first_connection;
-  int print_error= 0;
+
+  if(SphP[i].AGNFlag != 0)
+    SphP[i].AGNFlag = 0;
 
   while(q >= 0)
     {
@@ -528,21 +541,19 @@ void check_AGNsphere_ngb(int i){
       else{
         AGNFlag = PrimExch[particle].AGNFlag;
       }
-
+      
+      if(AGNFlag == 2)
+	SphP[i].AGNFlag = 3;
+      
       if(AGNFlag == 1){
-        print_error = 1;
+        SphP[i].AGNFlag = 4;
         break;
       }
-
+      
       if(q == SphP[i].last_connection)
         break;
 
       q = DC[q].next;
     }
-
-  if(print_error){
-    printf("%f %f %f %f %f %f %f %f %f %i \n", P[i].Pos[0], P[i].Pos[1], P[i].Pos[2], SphP[i].VelVertex[0], SphP[i].VelVertex[1], SphP[i].VelVertex[2], SphP[i].Density, get_cell_radius(i), get_sound_speed(i), P[i].TimeBinHydro);
-    terminate("AGNWIND: Flag 0 gas cell interacting with Flag 1 cell. Not allowed!\n");
-  }
 }
 #endif /* #ifdef AGNWIND_FLAG */

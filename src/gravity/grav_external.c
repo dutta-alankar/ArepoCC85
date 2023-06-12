@@ -235,6 +235,14 @@ static void gravity_external_get_force(double pos[3], int type, MyIDType ID, dou
       }
   }
 #endif /* #ifdef STATICHQ */
+#ifdef AGNWIND_FLAG
+  if(type==5)
+    {
+      acc[0]    = 0.0;
+      acc[1]    = 0.0;
+      acc[2]    = 0.0;
+    }
+#endif /* #ifdef AGNWIND_FLAG */
 }
 #endif /* #ifdef EXTERNALGRAVITY */
 

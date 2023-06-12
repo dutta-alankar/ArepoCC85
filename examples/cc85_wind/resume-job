@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name="agn-wind"
+#SBATCH --job-name="arepo-cc85"
 #SBATCH --mail-type=NONE         # Mail events (NONE, BEGIN, END, FAIL, ALL)
 #SBATCH --mail-user=alankardutta@iisc.ac.in    # Where to send mail.  Set this to your email address
 #SBATCH -p debug

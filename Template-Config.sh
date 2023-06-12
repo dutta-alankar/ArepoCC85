@@ -223,6 +223,8 @@
 #-------------------------------------- Special Boundaries within domain
 #AGNWIND_FLAG
 #AGNWIND_DUTYCYCLE
+#REFINE_AGNWIND
+#CLOUD_PRESENT
 #STICKYFLAGS
 #OUTPUT_STICKYFLAGS
 

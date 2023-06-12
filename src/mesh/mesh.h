@@ -56,6 +56,9 @@ extern struct scalar_index
 #ifdef REFINEMENT_HIGH_RES_GAS
   int HighResMass;
 #endif /* #ifdef REFINEMENT_HIGH_RES_GAS */
+#ifdef AGNWIND_FLAG
+  int AGNWind;
+#endif /* #ifdef AGNWIND_FLAG */
 } ScalarIndex;
 
 extern int N_Scalar; /*!< number of registered scalars */

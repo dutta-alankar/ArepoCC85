@@ -430,6 +430,24 @@ void read_parameter_file(char *fname)
       strcpy(tag[nt],"AGNWindSphereAng");
       addr[nt] = &All.AGNWindSphereAng;
       id[nt++] = REAL;
+      
+      strcpy(tag[nt],"BoostMeshDriftinWind");
+      addr[nt] = &All.BoostMeshDriftinWind;
+      id[nt++] = REAL;
+      
+      strcpy(tag[nt],"ResolutionBoostAGNWind");
+      addr[nt] = &All.ResolutionBoostAGNWind;
+      id[nt++] = REAL;
+      
+      strcpy(tag[nt],"EnhanceResFactor");
+      addr[nt] = &All.EnhanceResFactor;
+      id[nt++] = REAL;
+      
+#ifdef CLOUD_PRESENT
+      strcpy(tag[nt],"EnhanceResCloudNeigh");
+      addr[nt] = &All.EnhanceResCloudNeigh;
+      id[nt++] = REAL;
+#endif /* #ifdef CLOUD_PRESENT */  
 
 #ifdef AGNWIND_DUTYCYCLE
       strcpy(tag[nt],"TimeBeginAGN");

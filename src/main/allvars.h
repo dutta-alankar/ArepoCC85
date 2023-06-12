@@ -351,7 +351,13 @@ extern hwloc_cpuset_t cpuset_thread[NUM_THREADS];
 #define COUNT_PASSIVE_SCALARS 0
 #endif /* #ifdef PASSIVE_SCALARS #else */
 
-#define MAXSCALARS (COUNT_REFINE + COUNT_PASSIVE_SCALARS)
+#ifdef AGNWIND_FLAG
+#define COUNT_AGNWIND 1
+#else /* #ifdef AGNWIND_FLAG */
+#define COUNT_AGNWIND 0
+#endif /* #ifdef AGNWIND_FLAG #else */
+
+#define MAXSCALARS (COUNT_REFINE + COUNT_PASSIVE_SCALARS + COUNT_AGNWIND)
 #endif /* #if defined(REFINEMENT_HIGH_RES_GAS) ||  defined(PASSIVE_SCALARS)*/
 
 /* calculate appropriate value of MAXGRADIENTS */
@@ -1194,6 +1200,13 @@ extern struct global_data_all_processes
   double AGNWindPdot;
   double AGNWindSphereRad;
   double AGNWindSphereAng;
+  double FreezeMeshRadius;
+  double BoostMeshDriftinWind;
+  double ResolutionBoostAGNWind;
+  double EnhanceResFactor;
+#ifdef CLOUD_PRESENT
+  double EnhanceResCloudNeigh;
+#endif /* #ifdef CLOUD_PRESENT */
 #ifdef AGNWIND_DUTYCYCLE
   double TimeBeginAGN;
   double AGNDutyCycle;
@@ -1463,6 +1476,8 @@ extern struct sph_particle_data
 
 #ifdef AGNWIND_FLAG
   int AGNFlag;
+  MyFloat AGNWindFraction;
+  MyFloat AGNWindMass;
 #endif /* #ifdef AGNWIND_FLAG */
 
 } * SphP,          /*!< holds SPH particle data on local processor */
