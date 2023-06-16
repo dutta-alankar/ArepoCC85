@@ -13,7 +13,7 @@ import os
 import sys
 #import cmasher #This gives you additional, nice colour tables
 
-os.system('mkdir -p ./output/plots/')
+os.system('mkdir -p ../output/plots/')
 start = int(sys.argv[1])
 stop = int(sys.argv[2])+1
 
@@ -23,7 +23,7 @@ boxsize = [100,500]
 
 print('Without cells')
 
-o    = arun.Run(snappath='./output/',snapbase="snap_")
+o    = arun.Run(snappath='../output/',snapbase="snapshot_")
 for num in range(start, stop):
     s    = o.loadSnap(snapnum=num)
 
@@ -37,7 +37,7 @@ for num in range(start, stop):
     plt.ylabel(r'$y \,\rm [pc]$', fontsize=18)
     plt.hlines(25285, 24990, 25010, colors='tab:green', linestyles='solid', linewidth=3)
 
-    plt.savefig('./output/plots/density-noCont.%04d.png'%num)
+    plt.savefig('../output/plots/density-noCont.%04d.png'%num)
     plt.close()
 
     plt.figure(figsize=(8,13), num=num)
@@ -50,5 +50,5 @@ for num in range(start, stop):
     plt.ylabel(r'$y \,\rm [pc]$', fontsize=18)
     plt.hlines(25285, 24990, 25010, colors='tab:green', linestyles='solid', linewidth=3)
 
-    plt.savefig('./output/plots/pressure-noCont.%04d.png'%num)
+    plt.savefig('../output/plots/pressure-noCont.%04d.png'%num)
     plt.close()

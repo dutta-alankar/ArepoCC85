@@ -13,7 +13,7 @@ import os
 import sys
 #import cmasher #This gives you additional, nice colour tables
 
-os.system('mkdir -p ./output/plots/')
+os.system('mkdir -p ../output/plots/')
 start = int(sys.argv[1])
 stop = int(sys.argv[2])+1
 
@@ -22,7 +22,7 @@ boxsize = [500,1000]
 
 print('With cells')
 
-o    = arun.Run(snappath='./output/',snapbase="snap_")
+o    = arun.Run(snappath='../output/',snapbase="snapshot_")
 
 for num in range(start, stop):
     s    = o.loadSnap(snapnum=num)
@@ -36,14 +36,14 @@ for num in range(start, stop):
     plt.ylabel(r'$y \,\rm [pc]$', fontsize=18)
     plt.hlines(25285, 24990, 25010, colors='tab:green', linestyles='solid', linewidth=3)
 
-    plt.savefig('./output/plots/density.%04d.png'%num)
+    plt.savefig('../output/plots/density.%04d.png'%num)
     plt.close()
 
 boxsize = [500,1000]
 
 print('\nWithout cells')
 
-o    = arun.Run(snappath='./output/',snapbase="snap_")
+o    = arun.Run(snappath='../output/',snapbase="snapshot_")
 for num in range(start, stop):
     s    = o.loadSnap(snapnum=num)
 
@@ -56,14 +56,14 @@ for num in range(start, stop):
     plt.ylabel(r'$y \,\rm [pc]$', fontsize=18)
     plt.hlines(25285, 24990, 25010, colors='tab:green', linestyles='solid', linewidth=3)
 
-    plt.savefig('./output/plots/density-noCont.%04d.png'%num)
+    plt.savefig('../output/plots/density-noCont.%04d.png'%num)
     plt.close()
 
 boxsize = [25000,25000]
 
 print('\nWhole box')
 
-o    = arun.Run(snappath='./output/',snapbase="snap_")
+o    = arun.Run(snappath='../output/',snapbase="snapshot_")
 
 for num in range(start, stop):
     s    = o.loadSnap(snapnum=num)
@@ -77,14 +77,14 @@ for num in range(start, stop):
     plt.ylabel(r'$y \,\rm [pc]$', fontsize=18)
     plt.hlines(25285, 24990, 25010, colors='tab:green', linestyles='solid', linewidth=3)
 
-    plt.savefig('./output/plots/density-large.%04d.png'%num)
+    plt.savefig('../output/plots/density-large.%04d.png'%num)
     plt.close()
 # -------------------------------------------------------------------------------------------
 boxsize = [500,1000]
 
 print('With cells')
 
-o    = arun.Run(snappath='./output/',snapbase="snap_")
+o    = arun.Run(snappath='../output/',snapbase="snapshot_")
 
 for num in range(start, stop):
     s    = o.loadSnap(snapnum=num)
@@ -98,14 +98,14 @@ for num in range(start, stop):
     plt.ylabel(r'$y \,\rm [pc]$', fontsize=18)
     plt.hlines(25285, 24990, 25010, colors='tab:green', linestyles='solid', linewidth=3)
 
-    plt.savefig('./output/plots/pressure.%04d.png'%num)
+    plt.savefig('../output/plots/pressure.%04d.png'%num)
     plt.close()
 
 boxsize = [500,1000]
 
 print('\nWithout cells')
 
-o    = arun.Run(snappath='./output/',snapbase="snap_")
+o    = arun.Run(snappath='../output/',snapbase="snapshot_")
 for num in range(start, stop):
     s    = o.loadSnap(snapnum=num)
 
@@ -118,14 +118,14 @@ for num in range(start, stop):
     plt.ylabel(r'$y \,\rm [pc]$', fontsize=18)
     plt.hlines(25285, 24990, 25010, colors='tab:green', linestyles='solid', linewidth=3)
 
-    plt.savefig('./output/plots/pressure-noCont.%04d.png'%num)
+    plt.savefig('../output/plots/pressure-noCont.%04d.png'%num)
     plt.close()
 
 boxsize = [25000,25000]
 
 print('\nWhole box')
 
-o    = arun.Run(snappath='./output/',snapbase="snap_")
+o    = arun.Run(snappath='../output/',snapbase="snapshot_")
 
 for num in range(start, stop):
     s    = o.loadSnap(snapnum=num)
@@ -139,5 +139,5 @@ for num in range(start, stop):
     plt.ylabel(r'$y \,\rm [pc]$', fontsize=18)
     plt.hlines(25285, 24990, 25010, colors='tab:green', linestyles='solid', linewidth=3)
 
-    plt.savefig('./output/plots/pressure-large.%04d.png'%num)
+    plt.savefig('../output/plots/pressure-large.%04d.png'%num)
     plt.close()

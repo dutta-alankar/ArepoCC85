@@ -111,7 +111,7 @@ int derefine_should_this_cell_be_merged(int i, int flag)
   if(SphP[i].Volume < 0.5 * minvolume)
     return 1;
 
-  #ifdef AGNWIND_FLAG
+#ifdef AGNWIND_FLAG
   locate_AGN_sphere();
   double xpos, ypos, zpos;
   double r, theta, phi;
@@ -207,10 +207,9 @@ static int derefine_criterion_default(int i)
 #ifdef CLOUD_PRESENT
   double enhanceCloud = All.EnhanceResCloudNeigh;
   double neighColor = SphP[i].AGNWindFraction;
-  if ( (neighColor>1.e-3) || ( (ypos>0 && ypos<20*Rcl) && (fabs(xpos)<=4*Rcl) && (fabs(zpos)<=4*Rcl)) ){
+  if ( (neighColor>0.01) || ( (ypos>0 && ypos<20*Rcl) && (fabs(xpos)<=4*Rcl) && (fabs(zpos)<=4*Rcl)) ){
     if(P[i].Mass < 0.5 * enhanceCloud *All.TargetGasMass)
           return 1;
-    else return 0;
   }
 #endif /* #ifdef CLOUD_PRESENT */
 
@@ -229,7 +228,6 @@ static int derefine_criterion_default(int i)
         if(P[i].Mass < 0.5 * enhance * All.TargetGasMass)
           return 1;
 #endif /* #if defined(REFINE_AGNWIND) #else */
-        else return 0;
       }
     }
   }
@@ -239,12 +237,10 @@ static int derefine_criterion_default(int i)
       if(P[i].Mass < 0.5 * All.TargetGasMass/All.ResolutionBoostAGNWind)
         return 1;
     }
-    else return 0;
   }
 #endif /* #if defined(REFINE_AGNWIND) */
 #endif /* #ifdef  AGNWIND_FLAG */
 #endif /* #if defined(REFINEMENT_SPLIT_CELLS) && defined(REFINEMENT_MERGE_CELLS) */
-
   return 0;
 }
 
