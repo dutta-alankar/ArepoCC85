@@ -18,7 +18,7 @@ start = int(sys.argv[1])
 stop = int(sys.argv[2])+1
 
 xc, yc, zc = 25000, 25000, 25000
-boxsize = [500,1000]
+boxsize = [5000,5000]
 
 print('With cells')
 

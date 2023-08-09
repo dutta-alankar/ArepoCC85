@@ -54,7 +54,7 @@ static int refine_criterion_volume(int i);
 #endif /* #ifdef REFINEMENT_VOLUME_LIMIT */
 
 #ifdef REFINEMENT_MERGE_CELLS
-char *FlagDoNotRefine;
+extern char *FlagDoNotRefine;
 #endif /* #ifdef REFINEMENT_MERGE_CELLS */
 
 /*! \brief Should this cell be refined?
@@ -236,8 +236,8 @@ static int refine_criterion_default(int i)
        if(P[i].Mass > 2.0 * All.TargetGasMass/All.ResolutionBoostAGNWind)
          return 1;
     }
-  }
 #endif /* #if defined(REFINE_AGNWIND) */
+  }
 #endif /* #ifdef AGNWIND_FLAG */
     if(can_this_cell_be_split(i) && P[i].Mass > 2.0 * All.TargetGasMass)
       return 1;

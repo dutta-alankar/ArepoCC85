@@ -1,11 +1,15 @@
 #!/bin/sh
 
-module load hdf5/parallel fftw/parallel gsl gmp
-AREPO_DIR=/home/alankar/ArepoCC85
+module purge
+module load gcc/10 openmpi/4 hdf5-mpi/1.12.0 gsl/2.4 fftw-mpi/3.3.10
+
+export LD_LIBRARY_PATH="/mpcdf/soft/SLE_15/packages/skylake/openmpi/gcc_10-10.3.0/4.0.7/lib:/mpcdf/soft/SLE_15/packages/skylake/gsl/gcc_10-10.3.0/2.4/lib:/mpcdf/soft/SLE_15/packages/skylake/fftw/gcc_10-10.3.0-openmpi_4-4.0.7/3.3.10/lib:/mpcdf/soft/SLE_15/packages/skylake/hdf5/gcc_10-10.3.0-openmpi_4-4.0.7/1.12.0/lib:$LD_LIBRARY_PATH"
+
+AREPO_DIR=/freya/ptmp/mpa/adutt/ArepoCC85
 cd $AREPO_DIR
 make clean BUILD_DIR=$AREPO_DIR/examples/cc85_wind/build \
            CONFIG=$AREPO_DIR/examples/cc85_wind/Config.sh \
-		   EXEC=$AREPO_DIR/examples/cc85_wind/Arepo
-make -j16  BUILD_DIR=$AREPO_DIR/examples/cc85_wind/build \
+           EXEC=$AREPO_DIR/examples/cc85_wind/Arepo
+make -j1  BUILD_DIR=$AREPO_DIR/examples/cc85_wind/build \
            CONFIG=$AREPO_DIR/examples/cc85_wind/Config.sh \
-		   EXEC=$AREPO_DIR/examples/cc85_wind/Arepo
+	   EXEC=$AREPO_DIR/examples/cc85_wind/Arepo

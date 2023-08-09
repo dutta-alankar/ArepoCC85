@@ -112,7 +112,7 @@ AGNWindEdot              2.0e+41
 AGNWindPdot              0.
 AGNWindSphereRad         200.0
 AGNWindSphereAng         1.0
-BoostMeshDriftinWind     3.0
+BoostMeshDriftinWind     30.0
 ResolutionBoostAGNWind   1000.0
 EnhanceResFactor         1.0e-01
 % EnhanceResCloudNeigh     1.0e-02
