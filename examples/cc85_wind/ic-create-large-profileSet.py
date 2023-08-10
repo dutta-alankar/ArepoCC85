@@ -251,18 +251,14 @@ rr      = np.sqrt((lowres_data['pos'][:ncell_lowres,0] - SpherePos[0])**2 + \
                   (lowres_data['pos'][:ncell_lowres,1] - SpherePos[1])**2 + \
                   (lowres_data['pos'][:ncell_lowres,2] - SpherePos[2])**2)
 
-sintheta = np.sqrt(lowres_data['pos'][:ncell_lowres,0]**2 + lowres_data['pos'][:ncell_lowres,1]**2)/np.sqrt(lowres_data['pos'][:ncell_lowres,0]**2 + lowres_data['pos'][:ncell_lowres,1]**2 + lowres_data['pos'][:ncell_lowres,2]**2)
-costheta = lowres_data['pos'][:ncell_lowres,2]/np.sqrt(lowres_data['pos'][:ncell_lowres,0]**2 + lowres_data['pos'][:ncell_lowres,1]**2 + lowres_data['pos'][:ncell_lowres,2]**2)
-cosphi = lowres_data['pos'][:ncell_lowres,0]/np.sqrt(lowres_data['pos'][:ncell_lowres,0]**2 + lowres_data['pos'][:ncell_lowres,1]**2)
-sinphi = lowres_data['pos'][:ncell_lowres,1]/np.sqrt(lowres_data['pos'][:ncell_lowres,0]**2 + lowres_data['pos'][:ncell_lowres,1]**2)
 
 lowres_data['mass'][:ncell_lowres] = rho0*rhoTld(rr/(Rinj/pc)) / UnitDensity_in_g_per_cm3
 lowres_data['u'][:ncell_lowres]    = (1/(gamma-1))* ((P0*prsTld(rr/(Rinj/pc)))/(rho0*rhoTld(rr/(Rinj/pc)))) /  UnitU_in_cm_per_s_sq
 vel  = (v0*velTld(rr/(Rinj/pc))) / UnitVelocity_in_cm_per_s
 
-data['vel'][:ncell_lowres,0]  = vel * sintheta * cosphi
-data['vel'][:ncell_lowres,1]  = vel * sintheta * sinphi
-data['vel'][:ncell_lowres,2]  = vel * costheta
+data['vel'][:ncell_lowres,0]  = vel * (lowres_data['pos'][:ncell_lowres,0] - SpherePos[0])/rr
+data['vel'][:ncell_lowres,1]  = vel * (lowres_data['pos'][:ncell_lowres,1] - SpherePos[1])/rr
+data['vel'][:ncell_lowres,2]  = vel * (lowres_data['pos'][:ncell_lowres,2] - SpherePos[2])/rr
 
 # Remove lowres cells from highres region
 flag    = lowres_data['flga']
