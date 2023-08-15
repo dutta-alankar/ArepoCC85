@@ -126,6 +126,30 @@ endif
 # # end of Chandra cluster
 #
 
+# Freya cluster
+ifeq ($(SYSTYPE),"Freya")
+# # compiler and its optimization options
+CC        =  mpicc
+OPTIMIZE  =  -std=c11 -ggdb -O3 -Wall -Wno-format-security -Wno-unknown-pragmas -Wno-unused-function -Wundef -march=native
+#
+# # # overwrite default:
+MPICH_LIB = -lmpi -L/mpcdf/soft/SLE_15/packages/skylake/openmpi/gcc_10-10.3.0/4.0.7/lib
+GSL_LIB   = -lgsl -lgslcblas -L/mpcdf/soft/SLE_15/packages/skylake/gsl/gcc_10-10.3.0/2.4/lib
+GMP_LIB   = -lgmp
+HWLOC_LIB = -lhwloc
+# #
+# # # libraries that are included on demand, depending on Config.sh options
+HDF5_INCL = -I/mpcdf/soft/SLE_15/packages/skylake/hdf5/gcc_10-10.3.0-openmpi_4-4.0.7/1.12.0/include -DH5_USE_16_API
+HDF5_LIB  = -lhdf5 -lz -L/mpcdf/soft/SLE_15/packages/skylake/hdf5/gcc_10-10.3.0-openmpi_4-4.0.7/1.12.0/lib
+
+GSL_INCL  = -I/mpcdf/soft/SLE_15/packages/skylake/gsl/gcc_10-10.3.0/2.4/include
+# libraries that are included on demand, depending on Config.sh options
+FFTW_INCL = -I/mpcdf/soft/SLE_15/packages/skylake/fftw/gcc_10-10.3.0-openmpi_4-4.0.7/3.3.10/include
+FFTW_LIBS = -lfftw3 -L/mpcdf/soft/SLE_15/packages/skylake/fftw/gcc_10-10.3.0-openmpi_4-4.0.7/3.3.10/lib
+endif
+# # end of Freya cluster
+#
+
 # insert the library paths for your system here, similar to SYSTYPE "Darwin" above
 
 
