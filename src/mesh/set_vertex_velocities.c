@@ -232,7 +232,8 @@ void set_vertex_velocities(void)
 
               if(SphP[i].AGNFlag == 3)
 	        v = dmax(v,AGNWindVelocity);
-	      // if(SphP[i].PScalars[0] > 0.01)
+
+	      //if(SphP[i].PScalars[0] > 0.01)
 	      //  v = dmax(v,3*AGNWindVelocity);
 #endif /* #ifdef AGNWIND_FLAG */
 
@@ -247,6 +248,7 @@ void set_vertex_velocities(void)
           double Edot = All.AGNWindEdot / (All.UnitEnergy_in_cgs/All.UnitTime_in_s);
           if(SphP[i].AGNFlag == 3)
             vmax = dmax(vmax, All.BoostMeshDriftinWind * sqrt(2*Edot/Mdot));
+
           //if(SphP[i].PScalars[0] > 0.01)
 	  //  vmax = dmax(vmax,3*All.AGNWindVelocity/All.UnitVelocity_in_cm_per_s);
 #endif /* #ifdef AGNWIND_FLAG */
