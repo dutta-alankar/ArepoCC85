@@ -11,7 +11,7 @@ Make sure corresponding Arepo flag is on in Config.sh
 import numpy as np
 import healpy as hp
 #import matplotlib.pylab as plt
-#import sys
+import sys
 
 from gadget import gadget_write_ics
 from const import KB

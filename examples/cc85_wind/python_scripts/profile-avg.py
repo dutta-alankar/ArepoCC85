@@ -9,10 +9,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 import h5py
 import os
+import sys
 
 # dir = './output-relaxed'
 # dir = './output-relaxedSteady'
 dir = './output'
+base = 'snapshot'
 
 # constants
 mu = 0.61
@@ -59,11 +61,11 @@ contrast  = 10000.0
 
 cc85 = np.loadtxt('CC85_steady-prof_gamma_1.667.txt')
 
-for num in range(0,171):
+for num in range(0,int(sys.argv[1])+1):
     print(num, end='\r')
     data = {}
     rTill = 5000 # pc
-    with h5py.File(f'{dir}/snap_{num:03d}.hdf5', 'r') as hdf:
+    with h5py.File(f'{dir}/{base}_{num:03d}.hdf5', 'r') as hdf:
         # generate array
         count = np.array(hdf['/PartType0/AGNFlag']).shape[0]
         data['pos']       = np.zeros((count,3), dtype=np.float32)
