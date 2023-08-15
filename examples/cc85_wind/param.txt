@@ -47,7 +47,7 @@ ErrTolIntAccuracy    0.1
 ErrTolTheta          0.1
 ErrTolForceAcc       0.1
 
-MaxSizeTimestep      0.8
+MaxSizeTimestep      0.0008
 MinSizeTimestep      1e-10
 CourantFac           0.2
 
@@ -96,7 +96,7 @@ MinimumDensityOnStartUp  0.0
 %% moving mesh
 CellShapingSpeed                        0.5
 CellMaxAngleFactor                      2.25
-ReferenceGasPartMass                    1000
+ReferenceGasPartMass                    1.e3
 
 TargetGasMassFactor                     1
 RefinementCriterion                     1
@@ -112,8 +112,8 @@ AGNWindEdot              2.0e+41
 AGNWindPdot              0.
 AGNWindSphereRad         200.0
 AGNWindSphereAng         1.0
-BoostMeshDriftinWind     3.0
+BoostMeshDriftinWind     30.0
 ResolutionBoostAGNWind   1000.0
-EnhanceResFactor         1.0e-01
+EnhanceResFactor         1.0e+00
 % EnhanceResCloudNeigh     1.0e-02
 % StickyLayerMaxDist       1.0
