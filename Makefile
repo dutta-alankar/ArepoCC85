@@ -216,6 +216,7 @@ OBJS =   debug_md5/calc_checksum.o \
          hydro/riemann_hlld.o \
          hydro/scalars.o \
          hydro/update_primitive_variables.o \
+	 hydro/wind.o \
          init/begrun.o \
          init/density.o \
          init/init.o \

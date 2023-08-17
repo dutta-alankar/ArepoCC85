@@ -95,11 +95,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "../main/allvars.h"
 #include "../main/proto.h"
 
 #include "../mesh/voronoi/voronoi.h"
+#include "wind.h"
 
 /*! \brief Data needed for flux calculation.
  */
@@ -346,16 +348,38 @@ void compute_interface_fluxes(tessellation *T)
       face_turn_velocities(&state_R, &geom);
 
 #ifdef AGNWIND_FLAG
-      static double CC85_val = 0.;
+      double CC85_intg = 0.;
       static double radius2_old = 0.;
-
+      static int load_table = 0;
+      
+      if (load_table == 0) {
+        int overwrite = 0;
+        char CC85DataFile[256];
+        sprintf(CC85DataFile, "./CC85_steady-prof_gamma_%.3f.txt", GAMMA);
+        if(!access(CC85DataFile, F_OK ) && !access(CC85DataFile, R_OK )){
+            FILE *fp = fopen(CC85DataFile, "r");
+            fseek (fp, 0, SEEK_END);
+            int contentSize = ftell(fp);
+            overwrite = (contentSize==0)?1:0;
+        }
+        if(!access(CC85DataFile, F_OK ) && !access(CC85DataFile, R_OK ) && !overwrite)
+            read_CC85_data(CC85DataFile);
+        else{
+            printf("> Creating CC85 data:\n");
+            if (ThisTask==0) create_CC85_data();
+            MPI_Barrier (MPI_COMM_WORLD);
+            read_CC85_data(CC85DataFile);
+        }
+        load_table = 1;
+      }
       double Mdot = All.AGNWindMdot * (SOLAR_MASS/SEC_PER_YEAR) / (All.UnitMass_in_g/All.UnitTime_in_s);
       double Edot = All.AGNWindEdot / (All.UnitEnergy_in_cgs/All.UnitTime_in_s);
       double Pdot = All.AGNWindPdot / (All.UnitEnergy_in_cgs/All.UnitLength_in_cm);
       double Rinj = All.AGNWindSphereRad*PARSEC/All.UnitLength_in_cm;
       double opn  = All.AGNWindSphereAng;
+      double p_norm = sqrt(Mdot*Edot)*pow(Rinj,-2);
       double radius2, xpos, ypos, zpos;
-      double mass_fluxes, mom_fluxes, enrg_fluxes, p_wind, rTld;
+      double mass_fluxes, mom_fluxes, enrg_fluxes, rTld;
       char command[256];
       char filename[128];
 
@@ -363,49 +387,25 @@ void compute_interface_fluxes(tessellation *T)
       ypos = 0.5 * (DP[VF[i].p2].y + DP[VF[i].p1].y) - SpherePosY;
       zpos = 0.5 * (DP[VF[i].p2].z + DP[VF[i].p1].z) - SpherePosZ;
 
-      p_wind  = sqrt(Mdot*Edot)*pow(Rinj,-2);
       radius2 = xpos*xpos + ypos*ypos + zpos*zpos;
       rTld = sqrt(radius2)/Rinj;
 
-
-      if( (state_L.flga == 1 && state_R.flga == 2) || (state_L.flga == 2 && state_R.flga == 1) ){
+      if( (state_L.flga == 1 && state_R.flga == 2) || (state_L.flga == 2 && state_R.flga == 1) ) {
         // printf("CONSTANTS = %g %g %g %g %g %g\n", Mdot, Edot, Pdot, SpherePosX, SpherePosY, SpherePosZ);
-        int status;
-        double tol = 1e-3;
-        if (fabs((radius2_old-radius2)/radius2) > tol){
-            // printf("CC85: Radius: %.8e\n", sqrt(rTld));
-            CC85_val = 0.;
-            sprintf(command, "python ./momFlux.py %lf %s_%03d", rTld, "tmp", ThisTask);
-            status = system( command );
-            sprintf(filename, "./tmp_%03d.txt", ThisTask);
-            FILE *fp = fopen(filename, "r");
-            if (fp == NULL) {
-              printf("CC85: Error opening file tmp_%03d.txt\n", ThisTask);
-              printf("CC85: processor:%d, Python run status: %d\n", ThisTask, status);
-              MPI_Finalize();
-              exit(1);
-            }
-            char *line = NULL;
-            size_t len = 0;
-            ssize_t read;
-            int text_line = 0;
-            while ((read = getline(&line, &len, fp)) != -1) {
-              double number;
-              sscanf(line, "%lf", &number);
-              if (text_line==0) CC85_val = number;
-                text_line++;
-            }
-            sprintf(command, "rm -rf %s", filename);
-            status = system(command);
-            free(line);
-            fclose(fp);
-            radius2_old = radius2;
-            // printf("CC85: CC85 value: %.8e\n", CC85_val);
+        CC85_intg = 0.;
+        double rTld_now = 0.317;
+        double del_rTld = 1.0e-04;
+        while (rTld_now<=rTld) {
+          double rTld_mid = rTld_now + 0.5*del_rTld;
+          double prs_bar_dr  = (CC85prs(rTld_mid+0.5*del_rTld) - CC85prs(rTld_mid-0.5*del_rTld))/(2*del_rTld);
+          CC85_intg += (rTld_mid*rTld_mid*prs_bar_dr*del_rTld); // adding tiles
+          rTld_now += del_rTld;
         }
-    }
+        CC85_intg = CC85_intg/(rTld*rTld); 
+      }
 
       mass_fluxes  = Mdot / (4 * M_PI * opn * radius2);
-      mom_fluxes   = Pdot / (4 * M_PI * opn * radius2) + p_wind * CC85_val;
+      mom_fluxes   = Pdot / (4 * M_PI * opn * radius2) - p_norm * CC85_intg;
       enrg_fluxes  = Edot / (4 * M_PI * opn * radius2);
 #endif /* #ifdef AGNWIND_FLAG */
 
@@ -484,6 +484,7 @@ void compute_interface_fluxes(tessellation *T)
         //fluxes.scalars[0]  = 0.;
       }
       if(state_L.flga == 1 && state_R.flga == 2){
+        double p_wind = p_norm*CC85prs(rTld);
         fluxes.mass        =  mass_fluxes;
         fluxes.momentum[0] =  mom_fluxes * geom.nx + p_wind * geom.nx;
         fluxes.momentum[1] =  mom_fluxes * geom.ny + p_wind * geom.ny;
@@ -501,6 +502,7 @@ void compute_interface_fluxes(tessellation *T)
       }
 
       if(state_L.flga == 2 && state_R.flga == 1){
+        double p_wind = p_norm*CC85prs(rTld);
         fluxes.mass        = -mass_fluxes;
         fluxes.momentum[0] =  mass_fluxes * geom.nx + p_wind * geom.nx;
         fluxes.momentum[1] =  mass_fluxes * geom.ny + p_wind * geom.ny;

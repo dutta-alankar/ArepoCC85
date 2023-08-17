@@ -55,6 +55,9 @@
 #include "../time_integration/timestep.h"
 #include "../utils/dtypes.h"
 #include "../utils/tags.h"
+#ifdef AGNWIND_FLAG
+#include "../hydro/wind.h"
+#endif /* #ifdef AGNWIND_FLAG */
 
 #define AREPO_VERSION "Arepo public 1.0 + AGN wind (T. Costa) + Townsend Tabulated Cooling (A. Dutta)" /* code version string */
 
