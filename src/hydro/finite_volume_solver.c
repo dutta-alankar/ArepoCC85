@@ -351,7 +351,7 @@ void compute_interface_fluxes(tessellation *T)
       double CC85_intg = 0.;
       static double radius2_old = 0.;
       static int load_table = 0;
-      
+
       if (load_table == 0) {
         int overwrite = 0;
         char CC85DataFile[256];
@@ -401,7 +401,7 @@ void compute_interface_fluxes(tessellation *T)
           CC85_intg += (rTld_mid*rTld_mid*prs_bar_dr*del_rTld); // adding tiles
           rTld_now += del_rTld;
         }
-        CC85_intg = CC85_intg/(rTld*rTld); 
+        CC85_intg = CC85_intg/(rTld*rTld);
       }
 
       mass_fluxes  = Mdot / (4 * M_PI * opn * radius2);

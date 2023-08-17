@@ -34,10 +34,10 @@ void read_CC85_data(char *filename){
       terminate ("! read_CC85_data: %s could not be found.\n", filename);
     }
     rbyR     = (double *)malloc(200000 * sizeof(double));
-    rhotld   = (double *)malloc(200000 * sizeof(double)); 
-    prstld   = (double *)malloc(200000 * sizeof(double)); 
-    veltld   = (double *)malloc(200000 * sizeof(double)); 
-    machCC85 = (double *)malloc(200000 * sizeof(double)); 
+    rhotld   = (double *)malloc(200000 * sizeof(double));
+    prstld   = (double *)malloc(200000 * sizeof(double));
+    veltld   = (double *)malloc(200000 * sizeof(double));
+    machCC85 = (double *)malloc(200000 * sizeof(double));
 
     int dummy = fscanf(fCC85, "%*[^\n]\n"); //skip the header
     nwindtab = 0;

@@ -293,14 +293,14 @@ void endrun()
   else
     mpi_printf("leaving ./running file in place since run is complete to prevent any restarts.\n");
 #endif /* #ifdef RUNNING_SAFETY_FILE */
-  
+
 #ifdef AGNWIND_FLAG
-  free(rbyR); 
+  free(rbyR);
   free(rhotld);
   free(prstld);
   free(veltld);
   free(machCC85);
-#endif /* #ifdef AGNWIND_FLAG */  
+#endif /* #ifdef AGNWIND_FLAG */
   MPI_Finalize();
   exit(0);
 }
