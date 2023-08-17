@@ -56,7 +56,7 @@ UnitDensity_in_g_per_cm3 = UnitMass_in_g/UnitLength_in_cm**3
 boxsize   = 50000                              # pc
 boxhres   = 10000                              # pc
 lrpoints  = 10                                 # low resolution fill of the cell
-res       = 128                                # roughly res cels per side at high resolution
+res       = 512                                # roughly res cels per side at high resolution
 nside     = 6                                  # HEALPIX base resolution nside
 bndryR    = Rinj/pc                            # radius of boundary
 size_fac  = 1.                                 # thickness of boundary layers in units of half the grid size
@@ -113,8 +113,9 @@ data['pos'][:ncell,2] = cells_z.flatten()
 # Add boundary cells
 ipix   = np.arange(npix)
 xx,yy,zz = hp.pixelfunc.pix2vec(nside, ipix)
+closeness = 4
 
-dgrid = min(dgridx, dgridy, dgridz)
+dgrid = min(dgridx, dgridy, dgridz)/closeness
 # Inner Layer
 print("Inner layer: %.2f"%(bndryR-size_fac*dgrid/2.))
 data['pos'][ncell:ncell+npix,0]           = (bndryR-size_fac*dgrid/2.) * xx + SpherePos[0]
@@ -126,9 +127,9 @@ data['flga'][ncell:ncell+npix]            = 1
 
 #Outer Layer
 print("Outer layer: %.2f"%(bndryR+size_fac*dgrid/2.))
-data['pos'][ncell+npix:ncell+2*npix,0]    = (bndryR+size_fac*dgrid/2.) * xx + SpherePos[0]
-data['pos'][ncell+npix:ncell+2*npix,1]    = (bndryR+size_fac*dgrid/2.) * yy + SpherePos[1]
-data['pos'][ncell+npix:ncell+2*npix,2]    = (bndryR+size_fac*dgrid/2.) * zz + SpherePos[2]
+data['pos'][ncell+npix:ncell+2*npix,0]    = (bndryR+size_fac*dgrid/8.) * xx + SpherePos[0]
+data['pos'][ncell+npix:ncell+2*npix,1]    = (bndryR+size_fac*dgrid/8.) * yy + SpherePos[1]
+data['pos'][ncell+npix:ncell+2*npix,2]    = (bndryR+size_fac*dgrid/8.) * zz + SpherePos[2]
 data['flga'][ncell+npix:ncell+2*npix]     = 2
 # data['mass'][ncell+npix:ncell+2*npix]     = rho0 / UnitDensity_in_g_per_cm3
 # data['u'][ncell+npix:ncell+2*npix]        = (1/(gamma-1))* (P0/rho0) /  UnitU_in_cm_per_s_sq
