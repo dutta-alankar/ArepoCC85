@@ -12,4 +12,4 @@ make clean BUILD_DIR=$AREPO_DIR/examples/cc85_wind/build \
            EXEC=$AREPO_DIR/examples/cc85_wind/Arepo
 make -j$1  BUILD_DIR=$AREPO_DIR/examples/cc85_wind/build \
            CONFIG=$AREPO_DIR/examples/cc85_wind/Config.sh \
-	   EXEC=$AREPO_DIR/examples/cc85_wind/Arepo
+	         EXEC=$AREPO_DIR/examples/cc85_wind/Arepo

@@ -231,7 +231,7 @@ void set_vertex_velocities(void)
               double AGNWindVelocity = dmax(c_sound, All.BoostMeshDriftinWind * sqrt(2*Edot/Mdot));
 
               if(SphP[i].AGNFlag == 3)
-	        v = dmax(v,AGNWindVelocity);
+	              v = dmax(v,AGNWindVelocity);
 
 	      //if(SphP[i].PScalars[0] > 0.01)
 	      //  v = dmax(v,3*AGNWindVelocity);
