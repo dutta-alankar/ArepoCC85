@@ -101,7 +101,7 @@ example:
 
 
 cpu.txt
-=======
+-=======-
 
 For each sync-point, such a block is written. This file reports
 measurements of the different timers built into Arepo. Each
@@ -463,7 +463,7 @@ much memory is actually needed by the simulation.
 
 
 sfr.txt
-=======
+-=======-
 
 In case ``USE_SFR`` is active, Arepo will create a ``sfr.txt`` file,
 which reports the stars created in every call of the star-formation

@@ -130,7 +130,7 @@ endif
 ifeq ($(SYSTYPE),"Freya")
 # # compiler and its optimization options
 CC        =  mpicc
-OPTIMIZE  =  -std=c11 -ggdb -O3 -Wall -Wno-format-security -Wno-unknown-pragmas -Wno-unused-function
+OPTIMIZE  =  -std=c11 -ggdb -O3 -Wall -Wno-format-security -Wno-unknown-pragmas -Wno-unused-function -Wundef -march=native
 #
 # # # overwrite default:
 MPICH_LIB = -lmpi -L/mpcdf/soft/SLE_15/packages/skylake/openmpi/gcc_10-10.3.0/4.0.7/lib
@@ -216,6 +216,7 @@ OBJS =   debug_md5/calc_checksum.o \
          hydro/riemann_hlld.o \
          hydro/scalars.o \
          hydro/update_primitive_variables.o \
+	 hydro/wind.o \
          init/begrun.o \
          init/density.o \
          init/init.o \

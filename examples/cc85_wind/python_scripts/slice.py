@@ -28,7 +28,7 @@ for num in range(start, stop):
     s    = o.loadSnap(snapnum=num)
 
     plt.figure(figsize=(13,10), num=num)
-    s.plot_Aslice(value='rho', axes=[0,1], cmap='inferno', colorbar=True,
+    s.plot_Aslice(value='rho', axes=[0,1], cmap='cubehelix', colorbar=True,
     box = boxsize, proj=False, proj_fact=0.01, center=[xc,yc+500,zc], res=1024,
     cblabel=r'Density [code units]', logplot=True, contour=True, newfig=False)
 
@@ -48,7 +48,7 @@ for num in range(start, stop):
     s    = o.loadSnap(snapnum=num)
 
     plt.figure(figsize=(13,10), num=num)
-    s.plot_Aslice(value='rho', axes=[0,1], cmap='inferno', colorbar=True,
+    s.plot_Aslice(value='rho', axes=[0,1], cmap='cubehelix', colorbar=True,
     box = boxsize, proj=False, proj_fact=0.01, center=[xc,yc+500,zc], res=1024,
     cblabel=r'Density [code units]', logplot=True, contour=False, newfig=False)
 
@@ -69,7 +69,7 @@ for num in range(start, stop):
     s    = o.loadSnap(snapnum=num)
 
     plt.figure(figsize=(13,10), num=num)
-    s.plot_Aslice(value='rho', axes=[0,1], cmap='inferno', colorbar=True,
+    s.plot_Aslice(value='rho', axes=[0,1], cmap='cubehelix', colorbar=True,
     box = boxsize, proj=False, proj_fact=0.01, center=[xc,yc,zc], res=1024,
     cblabel=r'Density [code units]', logplot=True, contour=True, newfig=False)
 
@@ -90,7 +90,7 @@ for num in range(start, stop):
     s    = o.loadSnap(snapnum=num)
 
     plt.figure(figsize=(13,10), num=num)
-    s.plot_Aslice(value='pres', axes=[0,1], cmap='inferno', colorbar=True,
+    s.plot_Aslice(value='pres', axes=[0,1], cmap='cubehelix', colorbar=True,
     box = boxsize, proj=False, proj_fact=0.01, center=[xc,yc+500,zc], res=1024,
     cblabel=r'Pressure [code units]', logplot=True, contour=True, newfig=False)
 
@@ -110,7 +110,7 @@ for num in range(start, stop):
     s    = o.loadSnap(snapnum=num)
 
     plt.figure(figsize=(13,10), num=num)
-    s.plot_Aslice(value='pres', axes=[0,1], cmap='inferno', colorbar=True,
+    s.plot_Aslice(value='pres', axes=[0,1], cmap='cubehelix', colorbar=True,
     box = boxsize, proj=False, proj_fact=0.01, center=[xc,yc+500,zc], res=1024,
     cblabel=r'Pressure [code units]', logplot=True, contour=False, newfig=False)
 
@@ -131,7 +131,7 @@ for num in range(start, stop):
     s    = o.loadSnap(snapnum=num)
 
     plt.figure(figsize=(13,10), num=num)
-    s.plot_Aslice(value='pres', axes=[0,1], cmap='inferno', colorbar=True,
+    s.plot_Aslice(value='pres', axes=[0,1], cmap='cubehelix', colorbar=True,
     box = boxsize, proj=False, proj_fact=0.01, center=[xc,yc,zc], res=1024,
     cblabel=r'Pressure [code units]', logplot=True, contour=True, newfig=False)
 

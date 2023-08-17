@@ -6,3 +6,4 @@ export LD_LIBRARY_PATH="/mpcdf/soft/SLE_15/packages/skylake/openmpi/gcc_10-10.3.
 
 source /freya/ptmp/mpa/adutt/ArepoCC85/.venv/bin/activate
 python slice.py $1 $2
+python slice-zoom.py $1 $2
